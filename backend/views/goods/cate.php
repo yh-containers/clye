@@ -29,7 +29,7 @@ $this->params = [
                         <td>--</td>
                         <td><?=\common\models\GoodsCate::getStatusName($vo['status'])?></td>
                         <td>
-                            <a href="<?=\yii\helpers\Url::to(['add','id'=>$vo['id']])?>">编辑</a>
+                            <a href="<?=\yii\helpers\Url::to(['cate-add','id'=>$vo['id']])?>">编辑</a>
                             <a  href="javascript:;" onclick="$.common.del('<?= \yii\helpers\Url::to(['cate-del','id'=>$vo['id']])?>','删除')" class="ml-5">  删除</a>
                         </td>
                     </tr>

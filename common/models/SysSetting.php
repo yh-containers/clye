@@ -52,7 +52,6 @@ class SysSetting extends BaseModel
         $cache_name = 'setting_'.$type;
         $cache = \Yii::$app->cache;
         $cache->delete($cache_name);
-
         $model = self::findOne($type);
         $model->content = $content;
         return $model->save();

@@ -7,6 +7,8 @@ return [
     ],
     'timeZone' => 'Asia/Shanghai',
     'layout'=>'layout',
+    'charset' => 'utf-8',
+    'language' => 'zh-CN',
     'vendorPath' => dirname(dirname(__DIR__)) . '/vendor',
     'components' => [
         'cache' => [

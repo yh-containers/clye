@@ -1,5 +1,5 @@
 <?php
-namespace blog\controllers;
+namespace wechat\controllers;
 
 use frontend\models\ResendVerificationEmailForm;
 use frontend\models\VerifyEmailForm;

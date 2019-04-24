@@ -32,16 +32,100 @@ class ArticleController extends CommonController
         return $this->_renderNews(3);
     }
     //精彩瞬间
-    public function actionTip()
+    public function actionNewsTip()
     {
         return $this->_renderNews(4);
     }
     //药品证书
     public function actionCert()
     {
-        return $this->_renderNews(6);
+        $query = \common\models\Cert::find();
+        $count = $query->count();
+        $pagination = \Yii::createObject(array_merge(\Yii::$app->components['pagination'],['totalCount'=>$count]));
+        $list = $query->offset($pagination->offset)->limit($pagination->limit)->orderBy('sort asc')->all();
+
+        return $this->render('cert',[
+            'list'  => $list,
+            'pagination' => $pagination
+        ]);
     }
 
+    //常见问题
+    public function actionCertAdd()
+    {
+
+        $id = $this->request->get('id',0);
+        $model = new \common\models\Cert();
+        if($this->request->isAjax){
+            $php_input = $this->request->post();
+            $result = $model->actionSave($php_input);
+            return $this->asJson($result);
+        }
+
+        $model = $model::findOne($id);
+
+        return $this->render('certAdd',[
+            'model' => $model,
+        ]);
+
+
+    }
+
+
+    //-删除
+    public function actionCertDel()
+    {
+
+        $id = $this->request->get('id');
+        $model = new \common\models\Cert();
+        $result = $model->actionDel(['id'=>$id]);
+        return $this->asJson($result);
+    }
+
+    //常见问题
+    public function actionProblem()
+    {
+        $query = \common\models\Problem::find();
+        $count = $query->count();
+        $pagination = \Yii::createObject(array_merge(\Yii::$app->components['pagination'],['totalCount'=>$count]));
+        $list = $query->offset($pagination->offset)->limit($pagination->limit)->orderBy('sort asc')->all();
+        return $this->render('problem',[
+            'list'  => $list,
+            'pagination' => $pagination
+        ]);
+    }
+    //常见问题
+    public function actionProblemAdd()
+    {
+
+        $id = $this->request->get('id',0);
+        $model = new \common\models\Problem();
+        if($this->request->isAjax){
+            $php_input = $this->request->post();
+            $result = $model->actionSave($php_input);
+            return $this->asJson($result);
+        }
+
+        $model = $model::findOne($id);
+
+        return $this->render('problemAdd',[
+            'model' => $model,
+        ]);
+
+
+    }
+
+
+
+    //-删除
+    public function actionProblemDel()
+    {
+
+        $id = $this->request->get('id');
+        $model = new \common\models\Problem();
+        $result = $model->actionDel(['id'=>$id]);
+        return $this->asJson($result);
+    }
 
 
     public function actionNewsAdd()

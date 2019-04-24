@@ -20,6 +20,22 @@ class GoodsCate extends BaseModel
         ];
     }
 
+    /**
+     * 获取产品分类
+     * */
+    public static function getGoodsCate($pid=null,$limit=null)
+    {
+
+        $query = self::find()->where(['status'=>1])->orderBy('sort asc');
+        if(is_null($pid)){
+            $query = $query->with(['linkChild']);
+        }else{
+            $query = $query->andWhere(['pid'=>$pid]);
+        }
+
+        !is_null($limit) && $query =$query->limit($limit);
+        return $query->all();
+    }
 
 
 
