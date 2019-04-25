@@ -44,7 +44,7 @@ $this->title = '首页';
                 <li class="good_item">
                     <a href="<?=\yii\helpers\Url::to(['goods/detail','id'=>$vo['id']])?>">
                         <div class="img">
-                            <img class="lazy" src="<?=substr($vo['img'],0,strpos($vo['img'],','))?>" alt="">
+                            <img class="lazy" src="<?=\common\models\Goods::getCoverImg($vo['img'])?>" alt="">
                         </div>
                         <div class="prolist_info">
                             <div class="name"><?=$vo['name']?></div>

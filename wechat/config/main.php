@@ -14,9 +14,7 @@ return [
     'components' => [
         'request' => [
             'csrfParam' => '_csrf-wechat',
-            'csrfCookie' => [
-                'path' => '/wechat',
-            ],
+            'enableCookieValidation' => true,
         ],
         'pagination' =>[
             'class' => 'yii\data\Pagination',

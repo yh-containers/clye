@@ -22,6 +22,16 @@ class Goods extends BaseModel
         ];
     }
 
+    //获取商品封面图
+    public static function getCoverImg($img)
+    {
+        $index = strpos($img,',');
+        if($index===false){
+            return $img;
+        }else{
+            return substr($img,0,$index);
+        }
+    }
 
 
     public function rules()

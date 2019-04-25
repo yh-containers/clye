@@ -62,6 +62,7 @@ class BaseModel extends ActiveRecord implements ILogs
         $primary_keys_one_filed = isset($primary_keys[0])?$primary_keys[0]:'';
         if($primary_keys_one_filed && !empty($php_input[$primary_keys_one_filed])){
             $model = $model->findOne($php_input[$primary_keys_one_filed]);
+            $model->scenario = $this->scenario;
             if(empty($model)){
                 return ['code'=>0,'msg'=>'操作对象异常'];
             }

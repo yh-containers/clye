@@ -65,17 +65,21 @@ $this->params = array_merge($this->params,[
 <div class="footer">
     <div class="shop-bar-tab">
         <div class="bar-tab-item text-default" >
-            <a href="cart.html">
+            <a href="<?=\yii\helpers\Url::to(['cart/index'])?>">
                 <i class="iconfont icon-cart"></i>
                 <div class="bar-tab-label">购物车</div>
             </a>
         </div>
-        <div class="bar-tab-item text-default" id="collect">
+        <div class="bar-tab-item text-default <?=$is_col?'checked':''?>"
+             id="collect"
+             onclick="$.common.reqInfo(this)"
+             data-conf="{url:'<?=\yii\helpers\Url::to(['mine/goods-col'])?>',data:{gid:<?=$model['id']?$model['id']:0?>},success:handleCol}"
+        >
             <i class="iconfont icon-star"></i>
             <div class="bar-tab-label">收藏</div>
         </div>
-        <a class="bar-tab-item bg-warning" href="order_confirm.html">立即购买</a>
-        <div class="bar-tab-item bg-danger">加入购物车</div>
+        <a class="bar-tab-item bg-warning" href="<?=\yii\helpers\Url::to(['order/info','gid'=>$model['id']])?>">立即购买</a>
+        <div class="bar-tab-item bg-danger" onclick="$.common.reqInfo(this)" data-conf="{url:'<?=\yii\helpers\Url::to(['mine/add-cart'])?>',data:{gid:<?=$model['id']?$model['id']:0?>}}">加入购物车</div>
     </div>
 </div>
 
@@ -86,17 +90,19 @@ $this->params = array_merge($this->params,[
 <link rel="stylesheet" type="text/css" href="<?=\Yii::getAlias('@assets')?>/assets/css/swiper.min.css" />
 <script type="text/javascript" src="<?=\Yii::getAlias('@assets')?>/assets/js/swiper.min.js"></script>
 <script>
+    //收藏动作
+    function handleCol(res){
+        layui.layer.msg(res.msg)
+        if(res.hasOwnProperty('is_col')){
+            res.is_col?$("#collect").addClass('checked'):$("#collect").removeClass('checked')
+        }
+    }
     $(function(){
         var swiper = new Swiper('.swiper-container', {
             nextButton: '.swiper-button-next',
             prevButton: '.swiper-button-prev',
             pagination: '.swiper-pagination',
             paginationType: 'fraction'
-        });
-
-        // 收藏
-        $("#collect").on("click",function(){
-            $(this).toggleClass( "checked" );
         });
 
         $('.header_bar .item').click(function() {

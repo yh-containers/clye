@@ -6,7 +6,6 @@
     <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
     <title><?=empty($this->title)?\Yii::$app->name:$this->title?></title>
     <meta name="keywords" content="<?=\Yii::$app->name?>">
-    <meta id="_csrf_meta" name="<?= \Yii::$app->request->csrfParam ?>" content="<?= \Yii::$app->request->csrfToken ?>">
     <meta name="description" content="<?=\Yii::$app->name?>">
     <link rel="stylesheet" type="text/css" href="<?=\Yii::getAlias('@assets')?>/assets/css/style.css" />
     <link rel="stylesheet" type="text/css" href="<?=\Yii::getAlias('@assets')?>/assets/css/css.css" />

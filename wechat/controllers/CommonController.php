@@ -26,7 +26,7 @@ class CommonController extends Controller
         if(!empty($user_info)){
             $this->user_id = isset($user_info['user_id'])?$user_info['user_id']:0;
         }
-
+//        var_dump($_SESSION);var_dump($_COOKIE);exit;
     }
 
 

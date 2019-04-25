@@ -34,7 +34,7 @@ trait SoftDelete {
     /**
      * @return \yii\db\ActiveQuery|\yii2tech\ar\softdelete\SoftDeleteQueryBehavior
      */
-    public static function find()
+    public static function find($hide_delete=false)
     {
         $query = parent::find();
 
@@ -45,7 +45,8 @@ trait SoftDelete {
                 self::getSoftDeleteField() => null,
             ],
         ]);
-        $query = $query->notDeleted();
+
+        !$hide_delete && $query = $query->notDeleted();
 
         return $query;
     }

@@ -37,8 +37,12 @@ class GoodsController extends CommonController
     {
         $id= $this->request->get('id');
         $model = \common\models\Goods::findOne($id);
+        //验证用户是否收藏
+        $col_info = \common\models\UserCol::find()->where(['uid'=>$this->user_id,'gid'=>$id])->one();
+        $is_col = empty($col_info)?0:1;
         return $this->render('detail',[
             'model'=>$model,
+            'is_col'=>$is_col,
         ]);
     }
 
@@ -71,11 +75,14 @@ class GoodsController extends CommonController
                 'id'         =>  $vo['id'],
                 'name'       =>  $vo['name'],
                 'price'      =>  $vo['price'],
-                'cover_img'        =>  substr($vo['img'],0,strpos($vo['img'],',')),
+                'cover_img'  =>  \common\models\Goods::getCoverImg($vo['img']),
                 'intro'      =>  $vo['intro'],
             ];
         }
 
         return $this->asJson(['code'=>1,'msg'=>'获取成功','data'=>$data,'page'=>$pagination->pageCount]);
     }
+
+
+
 }

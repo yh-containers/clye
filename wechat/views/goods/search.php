@@ -31,7 +31,7 @@ $this->params = array_merge($this->params,[
     </div>
 
     <div class="no-data" style="display:none">
-        <img class="lazyload" data-original="images/no-search.png" alt="">
+        <img class="lazyload" data-original="<?=\Yii::getAlias('@assets')?>/assets/images/data-tips.png" alt="">
         <p>抱歉！暂无相关商品</p>
     </div>
     <div class="goods_list itemList">
@@ -50,12 +50,14 @@ $this->params = array_merge($this->params,[
 <script>
     var url = '<?=\yii\helpers\Url::to(['show-list','cid'=>$cid,'keyword'=>$keyword])?>';
     var detail_url = '<?=\yii\helpers\Url::to(['detail'])?>';
+    var opt_url = '<?=\yii\helpers\Url::to(['mine/add-cart'])?>';
     $(function(){
         layui.use('flow', function(){
             var $ = layui.jquery; //不用额外加载jQuery，flow模块本身是有依赖jQuery的，直接用即可。
             var flow = layui.flow;
             flow.load({
                 elem: '#demo' //指定列表容器
+                ,end:' '
                 ,done: function(page, next){ //到达临界点（默认滚动触发），触发下一页
                     var lis = [];
                     //以jQuery的Ajax请求为例，请求下一页数据（注意：page是从2开始返回）
@@ -75,13 +77,22 @@ $this->params = array_merge($this->params,[
                                 '                        </div>\n' +
                                 '                    </div>\n' +
                                 '                </a>\n' +
-                                '                <a href="javascript:;" class="cart_btn" id="addCart"></a>\n' +
+                                '                <a href="javascript:;" class="cart_btn" id="addCart"' +
+                                'onclick="$.common.reqInfo(this)" ' +
+                                'data-conf="{url:'+"'"+opt_url+"'"+',data:{gid:'+"'"+item.id+"'"+'}}"' +
+                                '></a>\n' +
                                 '            </li>');
                         });
 
                         //执行下一页渲染，第二参数为：满足“加载更多”的条件，即后面仍有分页
                         //pages为Ajax返回的总页数，只有当前页小于总页数的情况下，才会继续出现加载更多
                         next(lis.join(''), page < res.pages);
+                        //显示无商品信息
+                        if(page===1 && lis.length===0){
+                            $(".no-data").show()
+                        }
+
+
                     });
                 }
             });

@@ -1,5 +1,5 @@
 <?php
-$this->title='购物车';
+$this->title='个人中心';
 $this->params = array_merge($this->params,[
 ]);
 
@@ -24,19 +24,19 @@ $this->params = array_merge($this->params,[
         <div class="list-item-nav">
             <div class="user-nav clearfix">
                 <div class="col-xs-4">
-                    <a href="collect.html">
-                        <div class="num">16</div>
+                    <a href="<?=\yii\helpers\Url::to(['collect'])?>">
+                        <div class="num"><?=$col_num?></div>
                         <div class="label">收藏</div>
                     </a>
                 </div>
                 <div class="col-xs-4">
-                    <a href="address.html">
+                    <a href="<?=\yii\helpers\Url::to(['address'])?>">
                         <div class="icon icon-add"></div>
                         <div class="label">地址管理</div>
                     </a>
                 </div>
                 <div class="col-xs-4">
-                    <a href="personal.html">
+                    <a href="<?=\yii\helpers\Url::to(['info'])?>">
                         <div class="icon icon-edit"></div>
                         <div class="label">编辑资料</div>
                     </a>
@@ -86,55 +86,25 @@ $this->params = array_merge($this->params,[
     </section>
     <section class="content-grid margin-b-15">
         <div class="row user-list">
-            <a class="mui-navigate-right" href="user_info.html">
+            <a class="mui-navigate-right" href="<?=\yii\helpers\Url::to(['data'])?>">
                 <div class="icon icon-5"></div>
                 <div class="gird-lable">会员信息查看</div>
             </a>
-            <a class="mui-navigate-right" href="user_apply.html">
+            <a class="mui-navigate-right" href="<?=\yii\helpers\Url::to(['up'])?>">
                 <div class="icon icon-6"></div>
                 <div class="gird-lable">会员升级申请</div>
             </a>
-            <a class="mui-navigate-right" href="contract-list.html">
+            <a class="mui-navigate-right" href="<?=\yii\helpers\Url::to(['mine/contract'])?>">
                 <div class="icon icon-7"></div>
                 <div class="gird-lable">合同管理</div>
             </a>
-            <a class="mui-navigate-right" href="faq.html">
+            <a class="mui-navigate-right" href="<?=\yii\helpers\Url::to(['article/problem'])?>">
                 <div class="icon icon-8"></div>
                 <div class="gird-lable">常见问题</div>
             </a>
 
         </div>
     </section>
-</div>
-
-<div class="footer">
-    <div class="footer_bar">
-        <div class="item">
-            <a href="index.html">
-                <div class="icon sy-icon"></div>
-                <div class="tab-label">首页</div>
-            </a>
-        </div>
-        <div class="item">
-            <a href="products.html">
-                <div class="icon sort-icon"></div>
-                <div class="tab-label">商品</div>
-            </a>
-        </div>
-        <div class="item">
-            <a href="cart.html">
-                <div class="icon cart-icon"></div>
-                <div class="tab-label">购物车</div>
-                <span>2</span>
-            </a>
-        </div>
-        <div class="item active">
-            <a href="member.html">
-                <div class="icon my-icon"></div>
-                <div class="tab-label">我的</div>
-            </a>
-        </div>
-    </div>
 </div>
 
 <?=\wechat\widgets\Footer::widget(['current_active'=>'mine'])?>

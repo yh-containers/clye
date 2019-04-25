@@ -17,7 +17,7 @@
             <a href="<?=\yii\helpers\Url::to(['cart/index'])?>">
                 <div class="icon cart-icon"></div>
                 <div class="tab-label">购物车</div>
-                <span>2</span>
+                <?=$cart_num?'<span>'.$cart_num.'</span>':''?>
             </a>
         </div>
         <div class="item <?=$current_active=='mine'?'active':''?>">
