@@ -14,7 +14,7 @@ class UserController extends CommonController
         $query = \common\models\User::find();
         $count = $query->count();
         $pagination = \Yii::createObject(array_merge(\Yii::$app->components['pagination'],['totalCount'=>$count]));
-        $list = $query->with(['linkProvince','linkCity','linkArea','linkAreaInfo'])->offset($pagination->offset)->limit($pagination->limit)->orderBy('id desc')->all();
+        $list = $query->with(['linkProvince','linkCity','linkArea','linkAreaInfo','linkType'])->offset($pagination->offset)->limit($pagination->limit)->orderBy('id desc')->all();
         return $this->render('index',[
             'list'  =>  $list,
             'pagination' => $pagination
@@ -52,7 +52,41 @@ class UserController extends CommonController
             return $this->asJson($result);
         }
         $model = $model::findOne($id);
+        //用户类型
+        $type_list = \common\models\UserType::find()->orderBy('sort asc')->all();
+        //行政区
+        $area = \common\models\SysLocationArea::getCacheData();
         return $this->render('add',[
+            'model'=>$model,
+            'type_list'=>$type_list,
+            'area'=>$area,
+        ]);
+    }
+
+    //用户等级
+    public function actionType()
+    {
+        $query = \common\models\UserType::find();
+        $count = $query->count();
+        $pagination = \Yii::createObject(array_merge(\Yii::$app->components['pagination'],['totalCount'=>$count]));
+        $list = $query->offset($pagination->offset)->limit($pagination->limit)->orderBy('sort asc')->all();
+        return $this->render('type',[
+            'list'  =>  $list,
+            'pagination' => $pagination
+        ]);
+    }
+
+    public function actionTypeAdd()
+    {
+        $id = $this->request->get('id');
+        $model = new \common\models\UserType();
+        if($this->request->isAjax){
+            $php_input = $this->request->post();
+            $result = $model->actionSave($php_input);
+            return $this->asJson($result);
+        }
+        $model = $model::findOne($id);
+        return $this->render('typeAdd',[
             'model'=>$model,
         ]);
     }

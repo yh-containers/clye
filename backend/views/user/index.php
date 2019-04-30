@@ -36,7 +36,7 @@ $this->params = [
                     <tr>
                         <td><?=$key+1?></td>
                         <td><?=$vo['username']?></td>
-                        <td><?=$vo['type']?></td>
+                        <td><?=$vo['linkType']['name']?></td>
                         <td><?=$vo['phone']?></td>
                         <td><?=$vo['email']?></td>
                         <td><?=\common\models\User::getSexInfo($vo['sex']) ?></td>
@@ -52,7 +52,6 @@ $this->params = [
                         <td>
                             <a href="<?=\yii\helpers\Url::to(['add','id'=>$vo['id']])?>">编辑</a>
                             <a href="<?=\yii\helpers\Url::to(['detail','id'=>$vo['id']])?>">查看</a>
-                            <a  href="javascript:;" onclick="$.common.del('<?= \yii\helpers\Url::to(['del','id'=>$vo['id']])?>','删除')" class="ml-5">  删除</a>
                         </td>
                     </tr>
                 <?php }?>

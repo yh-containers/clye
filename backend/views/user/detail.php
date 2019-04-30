@@ -1,7 +1,6 @@
 <?php
     $this->title = '用户管理';
     $this->params = [
-            'current_active' => ['user','user/index'],
             'crumb'          => ['用户管理','用户详情'],
     ];
 ?>

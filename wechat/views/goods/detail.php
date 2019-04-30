@@ -31,7 +31,13 @@ $this->params = array_merge($this->params,[
             </h1>
             <p class="desc"><?=$model['intro']?></p>
             <div class="price_wrap">
-                <span class="price">¥<?=$model['price']?></span>
+                <span class="price">
+                    <?php
+                        if(!empty($model)) {
+                            $price=$model->getUserPrice($model_user);
+                            echo !is_null($price)?'￥'.$price:'';
+                        }
+                    ?></span>
 
                 <span class="sales">销量 <?=$model['sold_num']?>件</span>
             </div>
@@ -41,9 +47,9 @@ $this->params = array_merge($this->params,[
             <div class="number">
                 <span class="num_tip">数量选择</span>
                 <div class="shop-arithmetic">
-                    <div class="mui-numbox" data-numbox-min="0">
+                    <div class="mui-numbox" data-numbox-min="1">
                         <button class="mui-btn mui-btn-numbox-minus" type="button"></button>
-                        <input class="mui-input-numbox" type="number" />
+                        <input class="mui-input-numbox" type="number" id="buy-num" />
                         <button class="mui-btn mui-btn-numbox-plus" type="button"></button>
                     </div>
                 </div>
@@ -78,7 +84,7 @@ $this->params = array_merge($this->params,[
             <i class="iconfont icon-star"></i>
             <div class="bar-tab-label">收藏</div>
         </div>
-        <a class="bar-tab-item bg-warning" href="<?=\yii\helpers\Url::to(['order/info','gid'=>$model['id']])?>">立即购买</a>
+        <a class="bar-tab-item bg-warning" href="javascript:;" id="buy-buy" data-href="<?=\yii\helpers\Url::to(['order/info','gid'=>$model['id']])?>">立即购买</a>
         <div class="bar-tab-item bg-danger" onclick="$.common.reqInfo(this)" data-conf="{url:'<?=\yii\helpers\Url::to(['mine/add-cart'])?>',data:{gid:<?=$model['id']?$model['id']:0?>}}">加入购物车</div>
     </div>
 </div>
@@ -118,6 +124,12 @@ $this->params = array_merge($this->params,[
                 }
             };
         });
+
+        $("#buy-buy").click(function(){
+            var href=$(this).data("href")
+            var num = $("#buy-num").val()
+            window.location.href=href+(href.indexOf('?')===-1?'?':'&')+'num='+num
+        })
     })
 
 

@@ -107,4 +107,12 @@ class IndexController extends CommonController
 
         return $this->goHome();
     }
+
+    //获取地址
+    public function actionLocation()
+    {
+        $id = $this->request->get('id');
+        $list = \common\models\SysLocation::find()->select('id,name')->where(['pid'=>$id])->orderBy('sort asc')->all();
+        return $this->asJson($list);
+    }
 }

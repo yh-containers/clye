@@ -3,6 +3,7 @@ namespace common\models;
 use yii\db\ActiveRecord;
 class SysOptLogs extends BaseModel
 {
+    public static $is_ignore=true;//忽略日志记录
     //不记录操作日志
     public $is_record_log=false;
 

@@ -20,6 +20,7 @@ class SysManager extends BaseModel
             'name'      => '用户名',
             'account'   => '帐号',
             'rid'       => '角色',
+            'area_id'   => '行政区',
             'password'  => '密码',
         ]);
     }
@@ -74,7 +75,8 @@ class SysManager extends BaseModel
         return [
             [['name','account'], 'required','message'=>'{attribute}必须输入'],
             [['name'], 'string','length'=>[2,15],'tooLong'=>'{attribute}不得超过{max}个字符','tooShort'=>'{attribute}不得低于{min}个字符'],
-            [['rid'], 'required','message'=>'请选择用户{attribute}'],
+            [['rid'], 'required','message'=>'请选择管理员{attribute}'],
+            [['area_id'], 'required','message'=>'请选择管理员{attribute}'],
             [['account'], 'string','length'=>[4,15],'tooLong'=>'{attribute}不得超过{max}个字符','tooShort'=>'{attribute}不得低于{min}个字符'],
             [['account'], 'unique','message'=>'{attribute}帐号已使用'],
             [['password'], 'string', 'when' => function ($model,$attribute) {
@@ -103,6 +105,14 @@ class SysManager extends BaseModel
     public function getLinkRole()
     {
         return $this->hasOne(SysRole::className(),['id'=>'rid']);
+    }
+
+    /**
+     * 管理区域
+     * */
+    public function getLinkAreaName()
+    {
+        return $this->hasOne(SysLocationArea::className(),['id'=>'area_id']);
     }
 
 

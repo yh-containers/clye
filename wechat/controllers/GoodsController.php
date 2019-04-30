@@ -37,12 +37,16 @@ class GoodsController extends CommonController
     {
         $id= $this->request->get('id');
         $model = \common\models\Goods::findOne($id);
+        //当前用户模型
+        $model_user = \common\models\User::findOne($this->user_id);
         //验证用户是否收藏
         $col_info = \common\models\UserCol::find()->where(['uid'=>$this->user_id,'gid'=>$id])->one();
         $is_col = empty($col_info)?0:1;
+
         return $this->render('detail',[
             'model'=>$model,
             'is_col'=>$is_col,
+            'model_user'=>$model_user,
         ]);
     }
 
@@ -70,11 +74,14 @@ class GoodsController extends CommonController
             ->all();
 
         $data = [];
+        //当前用户模型
+        $model_user = \common\models\User::findOne($this->user_id);
+
         foreach($list as $vo){
             $data[] = [
                 'id'         =>  $vo['id'],
                 'name'       =>  $vo['name'],
-                'price'      =>  $vo['price'],
+                'price'      =>  $vo->getUserPrice($model_user),
                 'cover_img'  =>  \common\models\Goods::getCoverImg($vo['img']),
                 'intro'      =>  $vo['intro'],
             ];

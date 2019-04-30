@@ -1,5 +1,5 @@
 <?php
-$this->title='申请升级';
+$this->title='订单信息';
 $this->params = array_merge($this->params,[
 ]);
 
@@ -8,12 +8,13 @@ $this->params = array_merge($this->params,[
 <?php $this->beginBlock('content')?>
 <form id="form">
     <input type="hidden" name="<?=\Yii::$app->request->csrfParam?>" value="<?= \Yii::$app->request->csrfToken ?>"/>
+    <input type="hidden" name="channel" value="<?=$channel?>"/>
     <input type="hidden" name="addr_id" value="<?=$model_addr['id']?>"/>
     <input type="hidden" name="gid" value="<?=$gid?>"/>
     <input type="hidden" name="num" value="<?=$num?>"/>
 <div id="order-info">
 <div class="header">
-    <a class="back" href="javascript:history.go(-1)"></a>
+    <a class="back" href="javascript:history.go(<?=$channel?-3:-1?>)"></a>
     <h4>确认订单</h4>
 </div>
 
@@ -23,13 +24,13 @@ $this->params = array_merge($this->params,[
             <div class="addr-list">
                 <?php if(empty($model_addr)){?>
                     <div id="addr-edit">
-                        <a href="<?=\yii\helpers\Url::to(['mine/address-addr','origin'=>'order/info'])?>">
+                        <a href="<?=\yii\helpers\Url::to(['mine/address-addr','channel'=>'order'])?>">
                             <span class="address-fm">您的收货地址为空，点击添加收货地址</span>
                         </a>
                     </div>
                 <?php }else{?>
                     <div id="addr-default">
-                        <a href="<?=\yii\helpers\Url::to(['mine/address','origin'=>'order/info'])?>">
+                        <a href="<?=\yii\helpers\Url::to(['mine/address','channel'=>'order'])?>">
                             <div class="contact-name"><?=$model_addr['username']?></div>
                             <div class="contact-mobile"><?=substr_replace($model_addr['phone'],'****',3,4)?></div>
                             <div class="contact-addr"><?=$model_addr['addr'].'  '.$model_addr['addr_extra']?></div>
@@ -107,61 +108,7 @@ $this->params = array_merge($this->params,[
 
 
 <div style="display: none" id="contract">
-    <div class="header">
-        <h4>填写合同</h4>
-    </div>
-
-    <div class="main">
-        <div class="contract">
-            <ul>
-                <li>
-                    <div class="label">公司名称</div>
-                    <div class="con">
-                        <input type="text" name="contract[name]" value="" placeholder="请填写公司名称" autocomplete="off">
-                    </div>
-                </li>
-                <li>
-                    <div class="label">地址</div>
-                    <div class="con">
-                        <input type="text" name="contract[addr]" value="" placeholder="请填写公司地址" autocomplete="off">
-                    </div>
-                </li>
-                <li>
-                    <div class="label">法人代表</div>
-                    <div class="con">
-                        <input type="text" name="contract[f_name]" value="" placeholder="请填写法人代表" autocomplete="off">
-                    </div>
-                </li>
-                <li>
-                    <div class="label">委托代理人</div>
-                    <div class="con">
-                        <input type="text" name="contract[w_name]" value="" placeholder="请填写委托代理人" autocomplete="off">
-                    </div>
-                </li>
-                <li>
-                    <div class="label">付款方式</div>
-                    <div class="con">
-                        <select name="contract[pay_way]">
-                            <?php foreach($pay_way as $key=>$vo) {?>
-                            <option value="<?=$key?>"><?=$vo['name']?></option>
-                            <?php }?>
-                        </select>
-                    </div>
-                </li>
-            </ul>
-            <div class="contract_text">
-                <p>合同总金额：<font>¥<?=$money['pay_money']?></font></p>
-            </div>
-        </div>
-        <div class="footer">
-            <div class="shop-bar-tab">
-                <div class="bar-tab-item pay-infor">
-                    <div class="desc-text"><a href="contract-det.html">点击查看合同详情</a></div>
-                </div>
-                <a class="bar-tab-item bg-danger text-white" href="#" style="width: 6rem;" id="sure-contract">确定</a>
-            </div>
-        </div>
-    </div>
+    <?=  $this->render('/mine/contractDetailTemp',['money'=>$money['pay_money'],'title'=>'合同信息']) ?>
 </div>
 </form>
 <?php $this->endBlock()?>
@@ -180,7 +127,10 @@ $this->params = array_merge($this->params,[
         })
         $("#confirm").click(function(){
             $.post("<?=\yii\helpers\Url::to(['order/confirm'])?>",$("#form").serialize(),function(result){
-                console.log(result)
+                layui.layer.msg(result.msg)
+                if(result.hasOwnProperty('url')){
+                    window.location.href=result.url
+                }
             })
         })
     });

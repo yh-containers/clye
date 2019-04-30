@@ -38,8 +38,8 @@ class RecordOptLog extends Component
             $logs_index =  \common\models\SysOptLogs::getTypeIntro(null,null,$event->name);
             $object = $event->sender;
             if(!property_exists($object, self::EVENT_PROP_FIELD) || (property_exists($object, self::EVENT_PROP_FIELD) && $object[self::EVENT_PROP_FIELD])){
-                $table_name = $object::tableName();
-                if(strpos(self::IGNORE_TABLE,$table_name)===false){
+//                $table_name = $object::tableName();
+                if(empty($object::$is_ignore)){
                     //说明
                     $intro = property_exists($object,'opt_log_intro') && !empty($object::$opt_log_intro) ? $object::$opt_log_intro : null;
                     //处理说明

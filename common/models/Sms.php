@@ -47,9 +47,9 @@ class Sms extends BaseModel
     public static function getTypeInfo($type=null,$field=null)
     {
         $data = [
-            ['name'=>'用户注册','content'=>'您注册验证码为:{__VERIFY__}'],
-            ['name'=>'短信登录','content'=>'您此次登录验证码为:{__VERIFY__}'],
-            ['name'=>'忘记密码','content'=>'您此找回密码验证码为:{__VERIFY__}'],
+            ['name'=>'用户注册','content'=>'欢迎您登录华祖百草通，您本次注册的验证码为{__VERIFY__}'],
+            ['name'=>'短信登录','content'=>'欢迎您登录华祖百草通，您本次登录验证码为{__VERIFY__}'],
+            ['name'=>'忘记密码','content'=>'欢迎您登录华祖百草通，您本次找回密码的验证码为{__VERIFY__}'],
         ];
         if(is_null($data)){
             return $data;

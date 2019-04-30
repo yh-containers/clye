@@ -19,6 +19,7 @@
                 <tr>
                     <th>#</th>
                     <th>用户名</th>
+                    <th>行政区</th>
                     <th>角色</th>
                     <th>帐号</th>
                     <th>更新时间</th>
@@ -30,6 +31,7 @@
                     <tr>
                         <td><?=$key+1?></td>
                         <td><?=$vo['name']?></td>
+                        <td><?=$vo['linkAreaName']['name']?></td>
                         <td><?=$vo['userRoleName']?></td>
                         <td><?=$vo['account']?> </td>
                         <td><?=$vo['updateTime']?></td>

@@ -26,7 +26,7 @@ $this->params = array_merge($this->params,[
 
 <?php $this->beginBlock('script')?>
 <script>
-
+    var channel = "<?=$channel?>"
     $(function () {
         var url = '<?=\yii\helpers\Url::to(['address-list'])?>';
         var detail_url = '<?=\yii\helpers\Url::to(['mine/address-addr'])?>';
@@ -42,7 +42,7 @@ $this->params = array_merge($this->params,[
                         //假设你的列表返回在data集合中
                         layui.each(res.data, function(index, item){
                             lis.push(' <div class="address-list">\n' +
-                                '                <a class="addr_info" href="javascript:;">\n' +
+                                '                <a class="addr_info" href="javascript:;" data-id='+item.id+'>\n' +
                                 '                    <div class="addr_title">\n' +
                                 '                        <span class="name">'+item.username+'</span>\n' +
                                 '                        <span class="tel">'+item.phone+'</span>\n' +
@@ -66,7 +66,19 @@ $this->params = array_merge($this->params,[
             });
         });
 
+
+        $("#addr_skid").on('click','.addr_info',function(){
+            if(channel){
+
+                var addr_id = $(this).data('id');
+                var up_href = document.referrer
+                window.location.href= up_href+(up_href.indexOf('?')===-1?'?':'&')+'channel='+channel+'&addr_id='+addr_id
+            }
+        })
+
     });
+
+
 
 </script>
 

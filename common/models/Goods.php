@@ -6,6 +6,13 @@ use common\models\use_traits\SoftDelete;
 class Goods extends BaseModel
 {
     use SoftDelete;
+
+    //是否按用户等级显示价格
+    const SURE_USER_TYPE_PER=true;
+
+    //购买比例
+    public static $goods_per=false;
+
     public static function tableName()
     {
         return '{{%goods}}';
@@ -20,6 +27,31 @@ class Goods extends BaseModel
             'intro'     => '简介',
             'content'   => '详细',
         ];
+    }
+
+    //获取商品价格
+    public function getUserPrice(User $model_user=null)
+    {
+        if(empty($model_user)){
+            return null;
+        }elseif(self::SURE_USER_TYPE_PER){
+            $goods_per = self::getGoodsPer($model_user['type']);
+            $price = $goods_per*$this->price;
+            return empty($price)?0:($price<0.01?0.01:$price);
+        }else{
+            return $this->price;
+        }
+    }
+
+    //设置购买比例
+    public static function getGoodsPer($user_type_id=1)
+    {
+        if(self::$goods_per===false){
+            $user_type_info = UserType::findOne($user_type_id);
+            self::$goods_per = $user_type_info['per']?$user_type_info['per']:0;
+        }
+
+        return self::$goods_per;
     }
 
     //获取商品封面图
@@ -45,6 +77,8 @@ class Goods extends BaseModel
             ['sort','default','value'=>100],
             ['is_hot','default','value'=>0],
             ['status','default','value'=>1],
+            ['taxation_money','default','value'=>0.00],
+            ['freight_money','default','value'=>0.00],
             [['cid','img','name'],'safe']
         ];
     }

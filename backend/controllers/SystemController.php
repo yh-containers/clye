@@ -104,7 +104,7 @@ class SystemController extends CommonController
         $query = \common\models\SysManager::find();
         $count = $query->count();
         $pagination = \Yii::createObject(array_merge(\Yii::$app->components['pagination'],['totalCount'=>$count]));
-        $list = $query->with(['linkRole.linkParentRoles'])->offset($pagination->offset)->limit($pagination->limit)->all();
+        $list = $query->with(['linkRole.linkParentRoles','linkAreaName'])->offset($pagination->offset)->limit($pagination->limit)->all();
         return $this->render('manage',[
             'list'  => $list,
             'pagination' => $pagination
@@ -128,12 +128,16 @@ class SystemController extends CommonController
         }
 
         $model = $model::findOne($id);
+        //角色
         $roles = \common\models\SysRole::find()->asArray()->with(['linkRoles'=>function($query){
             return $query->where(['status'=>1]);
         }])->where(['pid'=>0,'status'=>1])->orderBy('sort asc')->all();
+        //行政区
+        $area = \common\models\SysLocationArea::getCacheData();
         return $this->render('manageAdd',[
             'model' => $model,
             'roles' => $roles,
+            'area' => $area,
         ]);
     }
 

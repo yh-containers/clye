@@ -18,6 +18,8 @@
          folder instead of downloading all of them to reduce the load. -->
     <link rel="stylesheet" href="/admin/assets/dist/css/skins/_all-skins.min.css">
     <link rel="stylesheet" href="/admin/assets/layui-v2.4.5/css/layui.css">
+    <!-- jQuery 3 -->
+    <script src="/admin/assets/bower_components/jquery/dist/jquery.min.js"></script>
 
     <?php if (isset($this->blocks['style'])): ?>
         <?= $this->blocks['style'] ?>
@@ -111,8 +113,6 @@
 
 </body>
 </html>
-<!-- jQuery 3 -->
-<script src="/admin/assets/bower_components/jquery/dist/jquery.min.js"></script>
 <!-- Bootstrap 3.3.7 -->
 <script src="/admin/assets/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 <!-- SlimScroll -->

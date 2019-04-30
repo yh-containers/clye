@@ -14,5 +14,10 @@ return [
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
+        'wechat' => [
+            'appid'=>'wx1199e133eb72505f',
+            'appsecret'=>'57d1e7a2e211e6b80de6e1ad99d09427',
+            'class' => 'common\components\Wechat'
+        ]
     ],
 ];

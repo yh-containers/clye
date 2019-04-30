@@ -4,11 +4,11 @@ namespace common\components;
 class Sms
 {
 
-    const USER_ID = '58319';
-    const ACCOUNT = '18123896256s';
+    const USER_ID = '59258';
+    const ACCOUNT = '17007087777';
     const PASSWORD = 'A93D10511AF0F361A1E5B72DFEF2';
     const URL = 'http://web.1xinxi.cn/asmx/smsservice.aspx';
-    const SIGN = '【中瀚哲】';
+    const SIGN = '【华祖百草通】';
     public static function send($content,$mobile)
     {
 

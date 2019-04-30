@@ -25,10 +25,21 @@ class MineController extends CommonController
     {
         //收藏数量
         $col_num = \common\models\UserCol::find()->where(['uid'=>$this->user_id])->count();
-
+        //待付款
+        $wait_num = \common\models\Order::find()->where(['uid'=>$this->user_id,'status'=>0])->count();
+        //生产中
+        $produce_num = \common\models\Order::find()->where(['uid'=>$this->user_id,'is_produce'=>1])->count();
+        //待发货
+        $send_num = \common\models\Order::find()->where(['uid'=>$this->user_id,'is_send'=>1])->count();
+        //待收货
+        $receive_num = \common\models\Order::find()->where(['uid'=>$this->user_id,'is_receive'=>1])->count();
         return $this->render('index',[
             'user_model' => $this->user_model,
             'col_num'=>$col_num?$col_num:0,
+            'wait_num'=>$wait_num?$wait_num:0,
+            'produce_num'=>$produce_num?$produce_num:0,
+            'send_num'=>$send_num?$send_num:0,
+            'receive_num'=>$receive_num?$receive_num:0,
         ]);
     }
 
@@ -71,9 +82,9 @@ class MineController extends CommonController
     //我的地址
     public function actionAddress()
     {
-        $origin = $this->request->get('origin');
+        $channel = $this->request->get('channel');
         return $this->render('address',[
-            'origin' => $origin
+            'channel' => $channel
         ]);
     }
     //我的地址-列表
@@ -278,9 +289,58 @@ class MineController extends CommonController
     //合同管理
     public function actionContract()
     {
-
+        $num = \common\models\UserContract::find()->where(['uid'=>$this->user_id])->count();
         return $this->render('contract',[
-            'num' => 0
+            'num' => $num
+        ]);
+    }
+    //合同管理
+    public function actionContractList()
+    {
+
+        $query = \common\models\UserContract::find()
+            ->where([
+                'uid'=>$this->user_id
+            ]);
+        $count = $query->count();
+        $pagination = \Yii::createObject(array_merge(\Yii::$app->components['pagination'],['totalCount' => $count]));
+        $list = $query->offset($pagination->offset)
+            ->limit($pagination->limit)
+            ->all();
+
+        $data = [];
+        foreach($list as $vo){
+            $data[] = [
+                'id'         =>  $vo['id'],
+                'name'       =>  $vo['name'],
+                'date'       =>  $vo['create_time']?date('Y-m-d',$vo['create_time']):'',
+            ];
+        }
+
+        return $this->asJson(['code'=>1,'msg'=>'获取成功','data'=>$data,'page'=>$pagination->pageCount]);
+    }
+    public function actionContractDetail()
+    {
+        $id = $this->request->get('id');
+        $model = \common\models\UserContract::findOne($id);
+
+        return $this->render('contractDetail',[
+            'model' => $model,
+        ]);
+    }
+    //合同具体内容
+    public function actionContractContent()
+    {
+        $id = $this->request->get('id');
+        $model = \common\models\UserContract::find()->where(['id'=>$id,'uid'=>$this->user_id])->one();
+        $content = '';
+        if(!empty($model)){
+            $content = $model['content'];
+        }else{
+            list($content)=\common\models\UserContract::setTempContent();
+        }
+        return $this->render('contractContent',[
+            'content' => $content,
         ]);
     }
 

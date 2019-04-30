@@ -20,6 +20,7 @@ class CommonController extends Controller
 
     public function init()
     {
+
         parent::init();
         $user_info =\Yii::$app->session->get('user_info');
         $this->request = \Yii::$app->request;

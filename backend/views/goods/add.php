@@ -71,6 +71,20 @@
                 </div>
             </div>
             <div class="form-group">
+                <label for="inputPassword3" class="col-sm-2 control-label">运费</label>
+
+                <div class="col-sm-10">
+                    <input type="number"  class="form-control" name="freight_money" value="<?=$model['freight_money']?$model['freight_money']:0.00?>" placeholder="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputPassword3" class="col-sm-2 control-label">税费</label>
+
+                <div class="col-sm-10">
+                    <input type="number"  class="form-control" name="taxation_money" value="<?=$model['taxation_money']?$model['taxation_money']:0.00?>" placeholder="">
+                </div>
+            </div>
+            <div class="form-group">
                 <label for="inputPassword3" class="col-sm-2 control-label">库存</label>
 
                 <div class="col-sm-10">
@@ -162,7 +176,7 @@
 
         });
         $("#goods-img").on('click','.item i',function(){
-            $(this).remove()
+            $(this).parent().remove()
         })
     })
 </script>

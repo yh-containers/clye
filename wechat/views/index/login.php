@@ -1,5 +1,5 @@
 <?php
-$this->title='用户注册';
+$this->title='用户登录';
 ?>
 
 <?php $this->beginBlock('style')?>
@@ -39,13 +39,13 @@ $this->title='用户注册';
         <div class="item">
             <div class="label">手机号</div>
             <div class="mui-input-row">
-                <input class="phone mui-input-clear" type="tel" name="phone" />
+                <input class="phone mui-input-clear" type="tel" name="phone" id="phone" />
             </div>
             <div class="icon icon-user"></div>
         </div>
         <div class="item">
             <div class="mui-input-row" style="margin-left:0px;"><input class="mui-input-clear" type="tel" name="verify" placeholder="请输入短信验证码" /></div>
-            <a href="javascript:;" class="code">获取验证码</a>
+            <a href="javascript:;" class="code"  onclick="$.common.sendVerify(this,1,$('#phone'))" >获取验证码</a>
         </div>
     </div>
     </form>

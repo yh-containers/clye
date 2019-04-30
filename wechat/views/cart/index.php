@@ -30,7 +30,7 @@ $this->params = array_merge($this->params,[
                                 <div class="shop-info">
                                     <input type="checkbox" class="check goods-check goodsCheck" data-cart_id="<?=$vo['id']?>" data-gid="<?=$vo['gid']?>" <?=$vo['is_checked']?'checked':''?>>
                                     <div class="shop-info-img">
-                                        <a href="products-det.html"><img src="<?=\common\models\Goods::getCoverImg($vo['linkGoods']['img'])?>"></a>
+                                        <a href="<?=\yii\helpers\Url::to(['goods/detail','id'=>$vo['gid']])?>"><img src="<?=\common\models\Goods::getCoverImg($vo['linkGoods']['img'])?>"></a>
                                     </div>
                                     <div class="shop-info-text">
                                         <h4><?=$vo['linkGoods']['name']?></h4>
@@ -62,7 +62,7 @@ $this->params = array_merge($this->params,[
             </div>
             <a class="settlement del-cart" id="delete" style="display: none;">删除</a>
             <a class="add_favorites" id="collect" style="display: none;">移入收藏</a>
-            <a href="order_confirm.html" id="settlement" class="settlement">去结算</a>
+            <a href="javascript:;" data-href="<?=\yii\helpers\Url::to(['order/info','channel'=>'cart'])?>" id="settlement" class="settlement">去结算</a>
         </div>
     </div>
 </div>
@@ -251,6 +251,16 @@ $this->params = array_merge($this->params,[
 
 
         });
+
+        //去结算
+        $("#settlement").click(function(){
+            if(!$(".shop-group-item input[type='checkbox']:checked").length){
+                layui.layer.msg('请选择需要购买的商品')
+                return false;
+            }
+            var href = $(this).data('href');
+            window.location.href=href
+        })
 
         function TotalPrice() {
             var allprice = 0;

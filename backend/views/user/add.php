@@ -28,28 +28,36 @@
                         <label for="inputPassword3" class="col-sm-2 control-label">用户类型</label>
 
                         <div class="col-sm-10">
-
+                            <select name="type" class="form-control">
+                                <?php foreach($type_list as $vo) {?>
+                                    <option value="<?=$vo['id']?>" <?=$vo['id']==$model['type']?'selected':''?>><?=$vo['name']?></option>
+                                <?php }?>
+                            </select>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="inputPassword3" class="col-sm-2 control-label">行政区</label>
 
                         <div class="col-sm-10">
-
+                            <select name="area_id" class="form-control">
+                                <?php foreach($area as $vo) {?>
+                                    <option value="<?=$vo['id']?>" <?=$vo['id']==$model['area_id']?'selected':''?>><?=$vo['name']?></option>
+                                <?php }?>
+                            </select>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="inputPassword3" class="col-sm-2 control-label">地区</label>
 
                         <div class="col-sm-10">
-
+                            <?=\backend\widgets\Location::widget(['province'=>$model['province'],'city'=>$model['city'],'area'=>$model['area']])?>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="inputPassword3" class="col-sm-2 control-label">手机号码</label>
 
                         <div class="col-sm-10">
-                            <input type="number" maxlength="20" class="form-control" name="username" value="<?= $model['username'] ?>" placeholder="手机号码">
+                            <input type="number" maxlength="20" class="form-control" name="phone" value="<?= $model['phone'] ?>" placeholder="手机号码">
                         </div>
                     </div>
                     <div class="form-group">

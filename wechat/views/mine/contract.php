@@ -30,7 +30,7 @@ $this->params = array_merge($this->params,[
 
     $(function () {
         var url = '<?=\yii\helpers\Url::to(['mine/contract-list'])?>';
-        var detail_url = '<?=\yii\helpers\Url::to(['mine/contract-addr'])?>';
+        var detail_url = '<?=\yii\helpers\Url::to(['mine/contract-detail'])?>';
         layui.use('flow', function(){
             var $ = layui.jquery; //不用额外加载jQuery，flow模块本身是有依赖jQuery的，直接用即可。
             var flow = layui.flow;

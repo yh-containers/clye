@@ -9,12 +9,15 @@ $params = array_merge(
 return [
     'id' => 'app-frontend',
     'basePath' => dirname(__DIR__),
-    'bootstrap' => ['log'],
+    'bootstrap' => ['log','checkWxLogin'],
     'controllerNamespace' => 'wechat\controllers',
     'components' => [
         'request' => [
             'csrfParam' => '_csrf-wechat',
             'enableCookieValidation' => true,
+        ],
+        'checkWxLogin'=>[
+            'class' => 'wechat\components\CheckWxLogin',
         ],
         'pagination' =>[
             'class' => 'yii\data\Pagination',

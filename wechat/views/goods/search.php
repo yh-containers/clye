@@ -73,7 +73,7 @@ $this->params = array_merge($this->params,[
                                 '                        <div class="name">'+item.name+'</div>\n' +
                                 '                        <div class="desc">'+item.intro+'</div>\n' +
                                 '                        <div class="price">\n' +
-                                '                            <span>¥'+item.price+'</span>\n' +
+                                '                            <span>'+(parseFloat(item.price)>=0?'¥'+item.price:'')+'</span>\n' +
                                 '                        </div>\n' +
                                 '                    </div>\n' +
                                 '                </a>\n' +

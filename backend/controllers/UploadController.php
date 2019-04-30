@@ -18,6 +18,7 @@ class UploadController extends CommonController
 
         //应用根目录
         $this->root_path = \Yii::getAlias('@resource_root');
+
         return $behaviors;
     }
 
@@ -30,14 +31,14 @@ class UploadController extends CommonController
         //相对路径
         $relative_path =  $this->root_dir.'/uploads/'.$type.'/'.date('Y-m-d').'/';
         //保存目录
-        $path = ($is_return?'.':'').$this->root_path.$relative_path;
+        $path = $relative_path;
         if (!file_exists($path)) {
             $this->createDir($path);
         }
         //保存文件名
         $save_name = md5(time().$file->baseName) . '.' . $file->extension;
         //保存绝对路径
-        $save_path = $path . $save_name;
+        $save_path = $this->root_path.$path . $save_name;
         //保存图片
         $file->saveAs($save_path);
         if($file->hasError){
@@ -60,13 +61,13 @@ class UploadController extends CommonController
         $arr = explode('/', $str);
         if(!empty($arr))
         {
-            $path = '';
+            $path = $this->root_path;
             foreach($arr as $k=>$v)
             {
                 $path .= $v.'/';
                 if (!file_exists($path)) {
                     mkdir($path, 0777);
-                    chmod($path, 0777);
+//                    chmod($path, 0777);
                 }
             }
         }

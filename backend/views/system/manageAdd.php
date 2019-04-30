@@ -31,6 +31,17 @@
                 </div>
             </div>
             <div class="form-group">
+                <label for="inputPassword3" class="col-sm-2 control-label">管理行政区</label>
+
+                <div class="col-sm-10">
+                    <select class="form-control" name="area_id">
+                        <?php foreach ($area as $vo){?>
+                            <option value="<?=$vo['id']?>" <?=$vo['id']==$model['area_id']?'selected':''?>><?=$vo['name']?></option>
+                        <?php }?>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
                 <label for="inputPassword3" class="col-sm-2 control-label">角色</label>
 
                 <div class="col-sm-10">

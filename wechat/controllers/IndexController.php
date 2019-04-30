@@ -65,7 +65,7 @@ class IndexController extends CommonController
             }
 
 
-            $this->_handleAction($model_user);
+            self::handleAction($model_user);
 
             return $this->asJson(['code'=>1,'msg'=>'登录成功','url'=>\yii\helpers\Url::to(['index'])]);
         }
@@ -76,7 +76,7 @@ class IndexController extends CommonController
     }
 
     //处理登录
-    private function _handleAction(\common\models\User $model_user=null)
+    public static function handleAction(\common\models\User $model_user=null)
     {
         if($model_user){
             $session = \Yii::$app->session;

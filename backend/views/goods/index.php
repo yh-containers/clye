@@ -33,7 +33,7 @@ $this->params = [
                     <tr>
                         <td><?=$key+1?></td>
                         <td title="<?=$vo['name']?>">
-                            <a href="<?=\yii\helpers\Url::to(['add','id'=>$vo['id']])?>"> <?=mb_strlen($vo['name'],'utf-8')>20?mb_substr($vo['name'],0,20).'...':$vo['name']?></a>
+                            <a href="<?=\yii\helpers\Url::to(['add','id'=>$vo['id']])?>"> <?=mb_strlen($vo['name'],'utf-8')>20?mb_substr($vo['name'],0,20,'utf-8').'...':$vo['name']?></a>
                         </td>
                         <td><?=$vo['linkCate']['name']?></td>
                         <td><?=$vo['price']?> </td>

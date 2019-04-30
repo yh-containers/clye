@@ -199,6 +199,42 @@ class User extends BaseModel
         }
     }
 
+    /**
+     * 微信授权登录处理
+     * @param $info array 配置信息
+     * @throws
+     * @return User
+     * */
+    public static function wechatAuth(\yii\base\BaseObject $wx_obj,$info)
+    {
+        if(empty($info['openid'])) throw new \Exception('微信openid参数异常');
+
+        $model_user = self::find()->where(['openid'=>$info['openid']])->one();
+        if(empty($model_user)){
+            if(empty($info['access_token'])) throw new \Exception('微信 access_token 参数异常');
+            //获取用户资料
+            $user_info = $wx_obj->getUserInfo($info['access_token'],$info['openid']);
+            $model_user = new self();
+            $model_user->username = $user_info['nickname'];
+            $model_user->sex = $user_info['sex'];
+            $model_user->face = $user_info['headimgurl'];
+            //默认用户类型
+            $model_user->type = 1;
+
+            $model_user->openid = $info['openid'];
+            $model_user->wx_access_token = $info['access_token'];
+            $model_user->refresh_token = $info['refresh_token'];
+            $model_user->wx_auth_time = time();
+//            var_dump($model_user->getAttributes());exit;
+            //直接入库
+            $save_bool = $model_user->save(false);
+            if(!$save_bool) throw new \Exception('保存用户信息异常');
+        }
+//        var_dump($model_user->getAttributes());exit;
+        return $model_user;
+    }
+
+
     public function behaviors()
     {
         $behaviors = parent::behaviors();
@@ -275,7 +311,7 @@ class User extends BaseModel
         $rule = parent::rules();
         $rule = array_merge($rule,[
             ['face','default','value'=>'/assets/images/default.jpg'],
-            ['type','default','value'=>0],
+            ['type','default','value'=>1],
             ['sex','default','value'=>0],
         ]);
         switch ($this->scenario){
@@ -316,12 +352,22 @@ class User extends BaseModel
                 ]);
                 break;
             default:
+                $rule = [
+                    [['type','sex','username','phone','province','city','area','area_id','openid','face','email',
+                    'password','salt','company_name','contacts','money','history_money','auth_key','access_token','status'],
+                    'safe']
+                ];
                 break;
         }
         return $rule;
     }
 
 
+    //省
+    public function getLinkType()
+    {
+        return $this->hasOne(UserType::className(),['id'=>'type']);
+    }
     //省
     public function getLinkProvince()
     {
