@@ -26,9 +26,10 @@ class UserOrderLogs extends BaseModel
      * @param $title string 标题
      * @param $intro string 具体内容
      * @param $info array 附加数据
+     * @param $is_show_user int 是否展示给用户
      * @return void
      * */
-    public static function recordLog($oid,$title,$intro='',$opt_mid=0,array $info=[])
+    public static function recordLog($oid,$title,$intro='',$opt_mid=0,array $info=[],$is_show_user=0)
     {
         $model = new self();
         $model->oid = $oid;
@@ -37,6 +38,7 @@ class UserOrderLogs extends BaseModel
         $model->opt_mid = $opt_mid;
         $model->info = json_encode($info);
         $model->create_time = date('Y-m-d H:i:s');
+        $model->is_show_user = $is_show_user;
         $model->save(false);
     }
 }

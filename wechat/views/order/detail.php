@@ -29,9 +29,11 @@ $this->params = array_merge($this->params,[
                  foreach ($current_step_info as $key=>$vo){
                      if(is_array($vo)){
                          foreach ($vo as $con_key=>$con_val){
-                             if(empty($model[$con_key]) || $model[$con_key]!=$con_val){
-                                 $is_logistics_bool=false;
-                                 break;
+                             foreach ($con_val as $attr_key=>$attr_val){
+                                 if(empty($model[$attr_key]) || $model[$attr_key]!=$attr_val){
+                                     $is_logistics_bool=false;
+                                     break;
+                                 }
                              }
                          }
                      }
@@ -45,7 +47,7 @@ $this->params = array_merge($this->params,[
              if($is_logistics_bool){
         ?>
         <div class="status-info">
-            <a href="javascript:alert('开发中...');">
+            <a href="<?=\yii\helpers\Url::to(['logistics','id'=>$model['id']])?>">
                 <i></i>
                 <div class="con">
                     <p><?=$current_step_info['name']?></p>

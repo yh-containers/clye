@@ -84,7 +84,7 @@ class Order extends BaseModel
         ];
         foreach ($goods_data as $vo){
 
-            $goods_price = $vo['price']*$vo['buy_num']; // 购买金额
+            $goods_price = $vo['per_price']*$vo['buy_num']; // 购买金额
             $goods_per_price = $vo['per_price']*$vo['buy_num']; // 购买金额
             $freight_money = $vo['freight_money']*$vo['buy_num']; // 运费金额
             $taxation_money = $vo['taxation_money']*$vo['buy_num']; // 税费金额
@@ -504,7 +504,7 @@ class Order extends BaseModel
     {
         $data = [
             ['name'=>'未开始','intro'=>'未开始'],
-            ['name'=>'等待收货','intro'=>'您的订单已发货,等待收货','handle'=>['receive']],
+            ['name'=>'等待收货','intro'=>'您的订单已发货,等待收货','handle'=>['receive','logistics']],
             ['name'=>'已收货','intro'=>'您已收货,物流已完成','handle'=>['logistics']],
         ];
 

@@ -43,10 +43,7 @@ $this->params = [
                         <td><?=$vo['taxation_money']?> </td>
                         <td><?=$vo['createTime']?></td>
                         <td><?=
-                            \common\models\Order::getStatusInfo($vo['status'],'name').','.
-                            \common\models\Order::getProduceInfo($vo['is_produce'],'name').','.
-                            \common\models\Order::getSendInfo($vo['is_send'],'name').','.
-                            \common\models\Order::getReceiveInfo($vo['is_receive'],'name')
+                            \common\models\Order::getStepFlowInfo($vo['step_flow'],'name')
                             ?></td>
                         <td>
                             <a href="<?=\yii\helpers\Url::to(['detail','id'=>$vo['id']])?>">查看</a>

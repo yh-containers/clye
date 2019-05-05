@@ -35,6 +35,7 @@ class MineController extends CommonController
         $receive_num = \common\models\Order::find()->where(['uid'=>$this->user_id,'is_receive'=>1])->count();
         return $this->render('index',[
             'user_model' => $this->user_model,
+            'user_type' => $this->user_model->linkType,
             'col_num'=>$col_num?$col_num:0,
             'wait_num'=>$wait_num?$wait_num:0,
             'produce_num'=>$produce_num?$produce_num:0,
@@ -214,6 +215,7 @@ class MineController extends CommonController
         return $this->render('data',[
             'user_model' => $this->user_model,
             'area_info' =>$area_info,
+            'user_type' => $this->user_model->linkType,
         ]);
     }
     //用户信息
@@ -224,6 +226,7 @@ class MineController extends CommonController
         return $this->render('up',[
             'user_model' => $this->user_model,
             'area_info' =>$area_info,
+            'user_type' => $this->user_model->linkType,
         ]);
     }
     //用户信息

@@ -27,7 +27,7 @@ class OrderBehavior extends Behavior
             // 处理器方法逻辑
             if($event->name==ActiveRecord::EVENT_AFTER_INSERT){
                 //新增
-                \common\models\UserOrderLogs::recordLog($object->id,'创建订单','创建订单');
+                \common\models\UserOrderLogs::recordLog($object->id,'创建订单','创建订单',0,[],1);
 
                 //发送创建订单模版消息
                 \common\models\WxTempMsg::sendMessage($object->uid,
@@ -44,13 +44,13 @@ class OrderBehavior extends Behavior
 
             }elseif ($event->name==ActiveRecord::EVENT_BEFORE_DELETE){
                 //删除
-                \common\models\UserOrderLogs::recordLog($object->id,'删除订单','删除订单');
+                \common\models\UserOrderLogs::recordLog($object->id,'删除订单','删除订单',0,[],1);
             }elseif ($event->name==ActiveRecord::EVENT_AFTER_UPDATE){
 
 
                 if(array_key_exists('is_produce',$changedAttributes)){
                     $name = \common\models\Order::getProduceInfo($object->is_produce,'name');
-                    \common\models\UserOrderLogs::recordLog($object->id,'调整订单信息','调整订单生成状态为:'.$name);
+                    \common\models\UserOrderLogs::recordLog($object->id,'调整订单信息','调整订单生成状态为:'.$name,0,[],1);
                     if($object->is_produce==2){
                         //订单已生产完成
                         \common\models\WxTempMsg::sendMessage($object->uid,
@@ -69,7 +69,7 @@ class OrderBehavior extends Behavior
 
                 if(array_key_exists('is_send',$changedAttributes)){
                     $name = \common\models\Order::getSendInfo($object->is_send,'name');
-                    \common\models\UserOrderLogs::recordLog($object->id,'调整订单信息','调整订单发货状态为:'.$name);
+                    \common\models\UserOrderLogs::recordLog($object->id,'调整订单信息','调整订单发货状态为:'.$name,0,[],1);
 
                     if($object->is_send==2){
                         //查询订单物流信息
@@ -92,7 +92,7 @@ class OrderBehavior extends Behavior
 
                 if(array_key_exists('is_receive',$changedAttributes)){
                     $name = \common\models\Order::getReceiveInfo($object->is_receive,'name');
-                    \common\models\UserOrderLogs::recordLog($object->id,'调整订单信息','调整订单收货状态为:'.$name);
+                    \common\models\UserOrderLogs::recordLog($object->id,'调整订单信息','调整订单收货状态为:'.$name,0,[],1);
 
                     if($object->is_receive==2){
                         //签收完成
@@ -112,7 +112,7 @@ class OrderBehavior extends Behavior
                 //更新
                 if(array_key_exists('status',$changedAttributes)){
                     $name = \common\models\Order::getStatusInfo($object->status,'name');
-                    \common\models\UserOrderLogs::recordLog($object->id,'调整订单信息','调整订单状态为:'.$name);
+                    \common\models\UserOrderLogs::recordLog($object->id,'调整订单信息','调整订单状态为:'.$name,0,[],1);
 
                     if($object->status==2){
                         //交易失败

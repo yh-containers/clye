@@ -46,7 +46,7 @@ $this->params = array_merge($this->params,[
     </div>
     <div class="user-vip">
         <div class="grade">
-            游客
+            <?=$user_type['name']?>
         </div>
         <a href="<?=\yii\helpers\Url::to(['up-page'])?>" class="apply">点击申请升级</a>
     </div>

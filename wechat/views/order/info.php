@@ -50,7 +50,7 @@ $this->params = array_merge($this->params,[
                     <div class="prod-desc">
                         <div class="name"><?=$vo['name']?></div>
                         <div class="level clearfix">
-                            <span class="price">¥<?=$vo['price']?></span>
+                            <span class="price">¥<?=$vo['per_price']?></span>
                             <span class="mun">X<?=$vo['buy_num']?></span>
                         </div>
                         <div class="sku_info">

@@ -21,7 +21,7 @@ $this->params = array_merge($this->params,[
         <div class="user-desc">
             <div class="user-vip">
                 <div class="grade">
-                    游客
+                    <?=$user_type['name']?>
                 </div>
                 <a href="<?=\yii\helpers\Url::to(['info'])?>" class="apply">修改资料</a>
             </div>

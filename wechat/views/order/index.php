@@ -43,6 +43,7 @@ $this->params = array_merge($this->params,[
         var detail_url = '<?=\yii\helpers\Url::to(['detail'])?>';
         var opt_url = '<?=\yii\helpers\Url::to(['mine/add-cart'])?>';
         var del_order_url = '<?=\yii\helpers\Url::to(['order/del'])?>';
+        var logistics_url = '<?=\yii\helpers\Url::to(['order/logistics'])?>';
         $(function(){
             layui.use('flow', function(){
                 var $ = layui.jquery; //不用额外加载jQuery，flow模块本身是有依赖jQuery的，直接用即可。
@@ -92,7 +93,7 @@ $this->params = array_merge($this->params,[
                                     '                    <div class="tab-btn clearfix">\n';
                                     //物流查看
                                     if(handle.indexOf('logistics')!==-1){
-                                        html+='<a href="javascript:alert(\'开发中.....\');" class="oh_btn">查看物流</a>\n';
+                                        html+='<a href="'+logistics_url+(logistics_url.indexOf('?')===-1?'?':'&')+'id='+item.id+'" class="oh_btn">查看物流</a>\n';
                                     }
 
                                     //删除订单

@@ -41,10 +41,7 @@
                                  <td>状态</td>
 
                                  <td colspan="3"><?=
-                                     \common\models\Order::getStatusInfo($model['status'],'name').','.
-                                     \common\models\Order::getProduceInfo($model['is_produce'],'name').','.
-                                     \common\models\Order::getSendInfo($model['is_send'],'name').','.
-                                     \common\models\Order::getReceiveInfo($model['is_receive'],'name')
+                                     \common\models\Order::getStepFlowInfo($model['step_flow'],'name')
                                      ?></td>
                              </tr>
                              <tr>

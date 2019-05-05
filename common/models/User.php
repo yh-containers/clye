@@ -363,7 +363,7 @@ class User extends BaseModel
     }
 
 
-    //省
+    //用户类型
     public function getLinkType()
     {
         return $this->hasOne(UserType::className(),['id'=>'type']);

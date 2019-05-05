@@ -36,7 +36,7 @@ $this->params = array_merge($this->params,[
                                         <h4><?=$vo['linkGoods']['name']?></h4>
                                         <p class="desc"><?=$vo['linkGoods']['intro']?></p>
                                         <div class="shop-price">
-                                            <div class="shop-pices">¥<span class="price"><?=$vo['linkGoods']['price']?></span></div>
+                                            <div class="shop-pices">¥<span class="price"><?=$user_model?$vo['linkGoods']->getUserPrice($user_model):'0.00'?></span></div>
                                             <div class="shop-arithmetic">
                                                 <a href="javascript:;" data-gid="<?=$vo['gid']?>" class="minus"> </a>
                                                 <span class="num"><?=$vo['num']?></span>
@@ -117,10 +117,10 @@ $this->params = array_merge($this->params,[
             var t = $(this).parent().find('.num');
             console.log(1);
             var gid = $(this).data('gid')
-            var num =parseInt(t.text()) - 1;
+            var num =parseInt(t.text());
             if(num>1){
                 $.common.reqInfo({url:goods_cart_url,data:{gid:gid,num:-1},success:function(){
-                        t.text(num);
+                        t.text(num-1);
                     }})
                 if (t.text() <= 1) {
                     t.text(1);
