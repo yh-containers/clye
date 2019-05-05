@@ -66,15 +66,79 @@
                 <label for="inputPassword3" class="col-sm-1 control-label">权限</label>
 
                 <div class="col-sm-10">
-                    
+                    <table class="table table-bordered">
+
+                        <thead>
+                        <tr>
+                            <th width="120">顶级栏目</th>
+                            <th>栏目节点</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        <?php foreach($node as $vo){?>
+                            <tr>
+                                <td rowspan="<?=count($vo['linkNode'])+1?>">
+                                    <label>
+                                        <input type="checkbox" name="node[]"  value="<?=$vo['uri']?>" <?=stripos($model['node'],$vo['uri'])!==false?'checked':''?> >
+                                        <?=$vo['name']?>
+                                    </label>
+                                </td>
+                                <td >--</td>
+                            </tr>
+                            <?php foreach($vo['linkNode'] as $one){?>
+                                <tr>
+                                    <td>
+                                        <label>
+                                            <input type="checkbox" name="node[]"  value="<?=$one['uri']?>" <?=stripos($model['node'],$one['uri'])!==false?'checked':''?> >
+                                            <?=$one['name']?>
+                                        </label>
+                                    <?php if(empty($one['uri'])){?>
+                                        <table class="table table-bordered">
+                                            <tbody>
+                                            <?php foreach($one['linkNode'] as $two){?>
+                                                <tr>
+                                                    <td width="180">
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                        <label>
+                                                            <input type="checkbox" name="node[]"  value="<?=$two['uri']?>" <?=stripos($model['node'],$two['uri'])!==false?'checked':''?> >
+                                                            <?=$two['name']?>
+                                                        </label>
+                                                    </td>
+                                                    <td>
+                                                        <?php foreach($two['linkNode'] as $three){?>
+                                                            <label>
+                                                                <input type="checkbox" name="node[]"  value="<?=$three['uri']?>"  <?=stripos($model['node'],$three['uri'])!==false?'checked':''?> >
+                                                                <?=$three['name']?>
+                                                            </label>
+                                                        <?php }?>
+                                                    </td>
+                                                </tr>
+
+                                            <?php }?>
+
+
+                                            </tbody>
+                                        </table>
+                                    <?php }else{?>
+                                            <?php foreach($one['linkNode'] as $two){?>
+                                            <label>
+                                                <input type="checkbox" name="node[]"  value="<?=$two['uri']?>" <?=stripos($model['node'],$two['uri'])!==false?'checked':''?> >
+                                                <?=$two['name']?>
+                                            </label>
+                                            <?php }?>
+                                    <?php }?>
+
+                                    </td>
+                                </tr>
+                            <?php }?>
+                        <?php }?>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
-        <!-- /.box-body -->
-        <div class="box-footer">
 
-        </div>
-        <!-- /.box-footer -->
     </form>
 </div>
 
@@ -84,7 +148,26 @@
 <?php $this->beginBlock('script');?>
 <script>
     $(function(){
+        $("input[type='checkbox']").change(function () {
+            var is_checked = $(this).prop('checked');
+            var rowspan = $(this).parent().parent().prop('rowspan');
+            if(rowspan>1){
+                var index = $(this).parents('tr').index()
+                $(this).parents('tr').nextAll().each(function(){
+                    if($(this).index()>index && $(this).index()<(index+rowspan)){
+                        $(this).find("input[type='checkbox']").prop('checked',is_checked?true:false  )
+                    }
+                })
+            }else{
+                var label_len = $(this).parent().parent().find('label').length;
+                if(label_len>1){
+                    $(this).parent().nextAll().find("input[type='checkbox']").prop('checked',is_checked?true:false  )
+                }else{
+                    $(this).parent().parent().next().find("input[type='checkbox']").prop('checked',is_checked)
+                }
+            }
 
+        })
     })
 </script>
 <?php $this->endBlock();?>

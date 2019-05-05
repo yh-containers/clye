@@ -9,17 +9,46 @@ class ArticleController extends CommonController
     {
         return $this->_renderNews(0);
     }
+
+    public function actionNewsCompanyAdd()
+    {
+        return $this->_newsAdd();
+    }
+    public function actionNewsCompanyDel()
+    {
+        return $this->_newsDel();
+    }
+
+
     //行业新闻
     public function actionNewsTrade()
     {
 
         return $this->_renderNews(1);
     }
+
+    public function actionNewsTradeAdd()
+    {
+        return $this->_newsAdd();
+    }
+    public function actionNewsTradeDel()
+    {
+        return $this->_newsDel();
+    }
     //宣传资料
     public function actionNewsSpread()
     {
 
         return $this->_renderNews(5);
+    }
+
+    public function actionNewsSpreadAdd()
+    {
+        return $this->_newsAdd();
+    }
+    public function actionNewsSpreadDel()
+    {
+        return $this->_newsDel();
     }
     //公司简介
     public function actionCompany()
@@ -35,6 +64,15 @@ class ArticleController extends CommonController
     public function actionNewsTip()
     {
         return $this->_renderNews(4);
+    }
+
+    public function actionNewsTipAdd()
+    {
+        return $this->_newsAdd();
+    }
+    public function actionNewsTipDel()
+    {
+        return $this->_newsDel();
     }
     //药品证书
     public function actionCert()
@@ -128,7 +166,7 @@ class ArticleController extends CommonController
     }
 
 
-    public function actionNewsAdd()
+    private function _newsAdd()
     {
         $type= $this->request->get('type');
         $id = $this->request->get('id');
@@ -152,7 +190,7 @@ class ArticleController extends CommonController
 
 
     //文章--删除
-    public function actionNewsDel()
+    private function _newsDel()
     {
         $id = $this->request->get('id');
         $type = $this->request->get('type');
@@ -177,6 +215,8 @@ class ArticleController extends CommonController
         $data = [
             'name' => $name,
             'type' => $type,
+            'add_action' => isset($article_info['add'])?$article_info['add']:'',
+            'del_action' => isset($article_info['del'])?$article_info['del']:'',
         ];
         if($is_more){
             $query = \common\models\Article::find()->where(['type'=>$type]);

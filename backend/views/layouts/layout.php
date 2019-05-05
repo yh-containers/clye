@@ -53,7 +53,7 @@
                 <ul class="nav navbar-nav">
                     <li class="dropdown user user-menu">
                         <a href="javascript:;">
-                            <span class="hidden-xs"><?=\Yii::$app->controller->user_name?></span>
+                            <span class="hidden-xs"><?=\Yii::$app->controller->user_model['name']?></span>
                         </a>
                     </li>
                     <li class="dropdown user user-menu">

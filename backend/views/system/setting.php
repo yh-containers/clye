@@ -57,31 +57,6 @@ $this->params = [
 
     </div>
     <div class="col-sm-6" >
-        <div class="box box-info">
-            <form class="form-horizontal" action="<?= \yii\helpers\Url::to(['setting-save'])?>">
-                <input name="_csrf" type="hidden" id="_csrf" value="<?= Yii::$app->request->csrfToken ?>">
-                <input name="type" type="hidden" value="problem">
-                <div class="box-header with-border">
-                    <h3 class="box-title">常见问题</h3>
-                    <div class="box-tools pull-right">
-                        <button type="button" class="btn btn-info btn-sm save-btn" id="add-line" >增加一行</button>
-                        <button type="button" class="btn btn-info btn-sm margin bg-yellow save-btn"  onclick="$.common.formSubmit($(this).parents('form'),1)">保存</button>
-                    </div>
-                </div>
-                <div class="box-body">
-                    <div class="form-group">
-                        <div class="col-sm-12" id="problem-block">
-                            <?php foreach($problem_content as $vo) {?>
-                            <div class="textarea-block">
-                                <i class="fa fa-fw fa-close"></i>
-                                <textarea name="content[]" class="textarea margin-bottom layui-textarea"><?=$vo?></textarea>
-                            </div>
-                            <?php }?>
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </div>
 
     </div>
 

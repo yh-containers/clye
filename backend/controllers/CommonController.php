@@ -16,7 +16,7 @@ class CommonController extends Controller
      * 用户模型
      * @var \common\models\SysManager
      * */
-    protected $user_model;
+    public $user_model=null;
 
     /**
      *
@@ -39,6 +39,7 @@ class CommonController extends Controller
                 $this->user_id = 0;
                 \Yii::$app->session->destroy();
             }
+
         }
 
         return parent::init();

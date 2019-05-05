@@ -252,7 +252,7 @@ class Order extends BaseModel
         }
     }
     //发货
-    public static function optSend($id,$state=1)
+    public static function optSend($id,$state=1,array $logistics=[])
     {
         if(empty($id)) throw new \Exception('订单数据异常');
         //查询订单信息
@@ -261,20 +261,37 @@ class Order extends BaseModel
 
         if($model['step_flow']!=2) throw new \Exception('订单流程异常,无法进行此操作');
 
-        $model->is_send = $state;
-        if($state==2){
-            //完成生产
-            $model->send_end_time = time();
-            $model->step_flow = 3; //进入发货
-            $model->is_receive=1;//等待收货状态
-            $model->receive_start_time=time();//开始收货时间
-        }elseif($state==1){
-            $model->send_start_time = time();
+        $transaction = self::getDb()->beginTransaction();
+        try{
+            $model->is_send = $state;
+            if($state==2){
+                if(empty($logistics['no']))  throw new \Exception('请输入物流单号');
+                if(empty($logistics['company']))  throw new \Exception('请输入公司名称');
+                //物流
+                $model_logistics = OrderLogistics::find()->where(['oid'=>$id])->limit(1)->one();
+                if(empty($model_logistics)){
+                    $model_logistics = new OrderLogistics();
+                }
+                $model_logistics->oid = $id;
+                $model_logistics->no = $logistics['no'];
+                $model_logistics->company = $logistics['company'];
+                $model_logistics->money = empty($logistics['money'])?0.00:$logistics['money'];
+                $model_logistics->save(false);
+                //发货完成
+                $model->send_end_time = time();
+                $model->step_flow = 3; //进入发货
+                $model->is_receive=1;//等待收货状态
+                $model->receive_start_time=time();//开始收货时间
+            }elseif($state==1){
+                $model->send_start_time = time();
+            }
+            $model->save(false);
+            $transaction->commit();
+        }catch (\Exception $e){
+            $transaction->rollBack();
+            throw new \Exception('订单操作异常:'.$e->getMessage());
         }
-        $save_bool = $model->save(false);
-        if(!$save_bool){
-            throw new \Exception('订单保存异常');
-        }
+
     }
     //收货
     public static function receive($id)
@@ -502,7 +519,7 @@ class Order extends BaseModel
         return $content;
     }
 
-    //获取订单地址
+    //获取订单用户信息
     public function getLinkUser()
     {
         return $this->hasOne(User::className(),['id'=>'uid']);
@@ -511,6 +528,11 @@ class Order extends BaseModel
     public function getLinkOrderAddr()
     {
         return $this->hasOne(OrderAddr::className(),['oid'=>'id'])->orderBy('id desc');
+    }
+    //获取订单物流信息
+    public function getLinkOrderLogistics()
+    {
+        return $this->hasOne(OrderLogistics::className(),['oid'=>'id'])->orderBy('id desc');
     }
     //获取订单商品
     public function getLinkOrderGoods()

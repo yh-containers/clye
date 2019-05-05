@@ -26,20 +26,29 @@ class SystemController extends CommonController
     public function actionRolesAdd()
     {
 
+
         $id = $this->request->get('id',0);
         $model = new \common\models\SysRole();
         if($this->request->isAjax){
             $php_input = $this->request->post();
-            if(empty($php_input['password']))  unset($php_input['password']);
-//            var_dump($php_input);exit;
+            if(isset($php_input['node'])){
+                $php_input['node'] =  array_filter($php_input['node']);
+                $php_input['node'] = implode(',',$php_input['node']);
+            }
+
             $result = $model->actionSave($php_input);
             return $this->asJson($result);
         }
         $top_role = \common\models\SysRole::find()->asArray()->where(['pid'=>0,'status'=>1])->all();
         $model = $model::findOne($id);
+
+        //页面所有节点
+        $node = \common\models\SysNode::find()->asArray()->with('linkNode.linkNode.linkNode.linkNode')->where(['pid'=>0])->orderBy('sort asc')->all();
+
         return $this->render('rolesAdd',[
             'model' => $model,
-            'top_role' => $top_role
+            'top_role' => $top_role,
+            'node' => $node,
         ]);
     }
 

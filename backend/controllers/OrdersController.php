@@ -24,7 +24,7 @@ class OrdersController extends CommonController
         //订单状态
 
         $model = \common\models\Order::find()
-            ->with(['linkUser','linkOrderAddr','linkOrderGoods','linkOrderContract','linkOrderLogs'])
+            ->with(['linkUser','linkOrderAddr','linkOrderGoods','linkOrderContract','linkOrderLogs','linkOrderLogistics'])
             ->where(['id'=>$id])
             ->one();
         $opt_handle = [];
@@ -100,8 +100,9 @@ class OrdersController extends CommonController
     public function actionSendDown()
     {
         $id = $this->request->get('id');
+        $logistics = $this->request->get('logistics');
         try{
-            \common\models\Order::optSend($id,2);
+            \common\models\Order::optSend($id,2,$logistics);
         }catch (\Exception $e){
             throw new \yii\base\UserException($e->getMessage());
         }

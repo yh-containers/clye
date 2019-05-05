@@ -29,7 +29,7 @@ class CheckWxLogin extends BaseObject
                     \wechat\controllers\IndexController::handleAction($model_user);
                 }catch (\Exception $e){
                     //授权异常
-                    var_dump($e->getMessage());exit;
+//                    var_dump($e->getMessage());exit;
                 }
 
 

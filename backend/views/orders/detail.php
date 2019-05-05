@@ -63,22 +63,22 @@
                                  <td><?=$model['createTime']?></td>
                                  <td>生产时间</td>
                                  <td><?=$model['pro_start_time']?date('Y-m-d H:i:s',$model['pro_start_time']):''?></td>
+                                 <td>生产完成时间</td>
+                                 <td><?=$model['pro_end_time']?date('Y-m-d H:i:s',$model['pro_end_time']):''?></td>
                                  <td>发货时间</td>
-                                 <td><?=$model['send_start_time']?date('Y-m-d H:i:s',$model['send_start_time']):''?></td>
-                                 <td>收货时间</td>
-                                 <td><?=$model['receive_start_time']?date('Y-m-d H:i:s',$model['receive_start_time']):''?></td>
+                                 <td><?=$model['send_end_time']?date('Y-m-d H:i:s',$model['send_end_time']):''?></td>
                              </tr>
                              <tr>
+                                 <td>收货时间</td>
+                                 <td><?=$model['receive_end_time']?date('Y-m-d H:i:s',$model['receive_end_time']):''?></td>
+                                 <td></td>
+                                 <td></td>
+                                 <td></td>
+                                 <td></td>
                                  <td>完成时间</td>
                                  <td><?=$model['complete_time']?></td>
-                                 <td></td>
-                                 <td></td>
-                                 <td></td>
-                                 <td></td>
-                                 <td></td>
-                                 <td></td>
                              </tr>
-                             <tr>
+                             <tr style="background: #f5f5f5;font-weight: bold">
                                  <td colspan="8">收货地址</td>
                              </tr>
                              <tr>
@@ -88,6 +88,19 @@
                                  <td><?=$model['linkOrderAddr']['phone']?></td>
                                  <td>地址</td>
                                  <td colspan="3"><?=$model['linkOrderAddr']['addr'].'  '.$model['linkOrderAddr']['addr_extra']?></td>
+                             </tr>
+                             <tr style="background: #f5f5f5; font-weight: bold">
+                                 <td colspan="8">发货信息</td>
+                             </tr>
+                             <tr>
+                                 <td>物流公司:</td>
+                                 <td><?=$model['linkOrderLogistics']['company']?></td>
+                                 <td>物流单号</td>
+                                 <td><?=$model['linkOrderLogistics']['no']?></td>
+                                 <td>物流价格</td>
+                                 <td><?=$model['linkOrderLogistics']['money']?></td>
+                                 <td></td>
+                                 <td></td>
                              </tr>
 
                              </tbody>
@@ -152,9 +165,11 @@
                         <a href="javascript:;" class="btn btn-default opt-order"  data-href="<?=\yii\helpers\Url::to(['send-up'])?>" data-confirm_title="是否准备发货?" data-req_data="{id:<?=$model['id']?>}">准备发货</a>
                     <?php }?>
                     <?php if(in_array('send_down',$opt_handle)){?>
-                        <a href="javascript:;" class="btn btn-default opt-order"  data-href="<?=\yii\helpers\Url::to(['send-down'])?>" data-confirm_title="确定已发货？" data-req_data="{id:<?=$model['id']?>}" >发货完成</a>
+
+                        <a href="javascript:;" class="btn btn-default opt-order send-order"  data-href="<?=\yii\helpers\Url::to(['send-down'])?>" data-confirm_title="确定已发货？" data-req_data="{id:<?=$model['id']?>}" >发货完成</a>
                     <?php }?>
                     <a href="<?=\yii\helpers\Url::to(['contract','oid'=>$model['id']])?>" target="_blank" class="btn btn-default">查看合同信息</a>
+
                 </div>
 
             </div>
@@ -181,6 +196,27 @@
             </div>
         </div>
 
+<!--发货-->
+<div id="send-order" style="display: none;">
+    <div class="form-group">
+        <label for="inputPassword3" class="col-sm-3 control-label">发货单号:</label>
+        <div class="col-sm-8 margin-bottom">
+            <input type="text" maxlength="100" class="form-control" name="no"  placeholder="发货单号">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="inputPassword3" class="col-sm-3 control-label">物流公司:</label>
+        <div class="col-sm-8 margin-bottom">
+            <input type="text" maxlength="100" class="form-control" name="company"  placeholder="物流公司">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="inputPassword3" class="col-sm-3 control-label">运费:</label>
+        <div class="col-sm-8 margin-bottom">
+            <input type="number"  class="form-control" name="money"  placeholder="0.00">
+        </div>
+    </div>
+</div>
 
 
 
@@ -194,6 +230,32 @@
             var req_data = $(this).data('req_data')
             var confirm_title = $(this).data('confirm_title')
             req_data = eval('('+req_data+')')
+
+            //订单发货
+            if($(this).hasClass('send-order')){
+                layer.open({
+                    type:1
+                    ,title:'填写发货信息'
+                    ,btn: ['确认', '取消']
+                    ,area:['400px','300px']
+                    ,content:$("#send-order")
+                    ,yes: function(index, layero){
+                    //按钮【按钮一】的回调
+                        req_data.logistics={}
+                        req_data['logistics']['no']=$("#send-order input[name='no']").val()
+                        req_data['logistics']['company']=$("#send-order input[name='company']").val()
+                        req_data['logistics']['money']=$("#send-order input[name='money']").val()
+                        //请求数据
+                        reqInfo(href,req_data,confirm_title)
+                    }
+                })
+            }else{
+                //请求数据
+                reqInfo(href,req_data,confirm_title)
+            }
+        })
+
+        function reqInfo(href,req_data,confirm_title){
             layer.confirm(confirm_title,function(){
                 var index = layer.load(3)
                 $.get(href,req_data,function(result){
@@ -204,8 +266,7 @@
                     }
                 })
             })
-
-        })
+        }
     })
 </script>
 <?php $this->endBlock()?>

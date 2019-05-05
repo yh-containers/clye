@@ -18,6 +18,13 @@ return [
             'appid'=>'wx1199e133eb72505f',
             'appsecret'=>'57d1e7a2e211e6b80de6e1ad99d09427',
             'class' => 'common\components\Wechat'
-        ]
+        ],
+        //微信路由
+        'urlManagerWx' => [
+            'class' => 'yii\web\urlManager',
+            'scriptUrl' => '/wx', //代替'baseUrl'
+            'enablePrettyUrl' => true,
+            'showScriptName' => true,
+        ],
     ],
 ];

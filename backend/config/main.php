@@ -11,7 +11,7 @@ return [
     'name' => '春岚药业',
     'basePath' => dirname(__DIR__),
     'controllerNamespace' => 'backend\controllers',
-    'bootstrap' => ['log','recordOptLog'],
+    'bootstrap' => ['log','recordOptLog','checkAuth'],
     'modules' => [],
     'components' => [
         'request' => [
@@ -40,6 +40,9 @@ return [
         ],
         'recordOptLog'=>[
             'class' => 'backend\components\RecordOptLog',
+        ],
+        'checkAuth'=>[
+            'class' => 'backend\components\CheckAuth',
         ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,

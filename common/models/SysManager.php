@@ -33,6 +33,13 @@ class SysManager extends BaseModel
         return !empty($this['linkRole'])?(!empty($this['linkRole']['linkParentRoles'])?($this['linkRole']['linkParentRoles']['name'].'('.$this['linkRole']['name'].')'):$this['linkRole']['name']):'--';
     }
 
+    //获取用户角色节点信息
+    public function getRoleNode()
+    {
+        $info = SysRole::findOne($this->rid);
+        return $info['node'];
+    }
+
     public function getPassword($event)
     {
         if($this->isAttributeChanged('password') && !empty($this->password)){

@@ -10,7 +10,7 @@
 
     <div class="box">
         <div class="box-header with-border">
-            <a href="<?=\yii\helpers\Url::to(['news-add','type'=>$type])?>" class="btn bg-olive margin">新增(<?=$name?>)</a>
+            <a href="<?=\yii\helpers\Url::to([$add_action,'type'=>$type])?>" class="btn bg-olive margin">新增(<?=$name?>)</a>
         </div>
         <!-- /.box-header -->
         <div class="box-body">
@@ -53,8 +53,8 @@
                         <td><?=$vo['show_time']?></td>
                         <td><?=\common\models\Article::getStatusName($vo['status'])?></td>
                         <td>
-                            <a href="<?=\yii\helpers\Url::to(['news-add','id'=>$vo['id'],'type'=>$type])?>">编辑</a>
-                            <a  href="javascript:;" onclick="$.common.del('<?= \yii\helpers\Url::to(['news-del','id'=>$vo['id'],'type'=>$type])?>','删除')" class="ml-5">  删除</a>
+                            <a href="<?=\yii\helpers\Url::to([$add_action,'id'=>$vo['id'],'type'=>$type])?>">编辑</a>
+                            <a  href="javascript:;" onclick="$.common.del('<?= \yii\helpers\Url::to([$del_action,'id'=>$vo['id'],'type'=>$type])?>','删除')" class="ml-5">  删除</a>
                         </td>
                     </tr>
                 <?php }?>

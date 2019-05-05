@@ -27,12 +27,12 @@ class Article extends BaseModel
     {
         //不要调整数组顺序谢谢
         $data = [
-            ['name'=>'企业新闻','is_more'=>true,'page'=>'news'],
-            ['name'=>'行业新闻','is_more'=>true,'page'=>'news'],
+            ['name'=>'企业新闻','is_more'=>true,'page'=>'news','add'=>'news-company-add','del'=>'news-company-del'],
+            ['name'=>'行业新闻','is_more'=>true,'page'=>'news','add'=>'news-trade-add','del'=>'news-trade-del'],
             ['name'=>'公司简介','is_more'=>false,'page'=>'intro','type'=>'company_intro'],
             ['name'=>'企业文化','is_more'=>false,'page'=>'intro','type'=>'company_edu'],
-            ['name'=>'精彩瞬间','is_more'=>true,'page'=>'news'],
-            ['name'=>'宣传资料','is_more'=>true,'page'=>'news'],
+            ['name'=>'精彩瞬间','is_more'=>true,'page'=>'news','add'=>'news-tip-add','del'=>'news-tip-del'],
+            ['name'=>'宣传资料','is_more'=>true,'page'=>'news','add'=>'news-spread-add','del'=>'news-spread-del'],
             ['name'=>'药品证书','is_more'=>false,'page'=>'intro','type'=>'company_cert'],
         ];
         if(is_null($type)){

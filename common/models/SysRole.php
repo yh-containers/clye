@@ -37,6 +37,7 @@ class SysRole extends BaseModel
                     ['sort','default','value'=>100],
                     ['status','default','value'=>1],
                     ['pid','default','value'=>0],
+                    ['node','default','value'=>null],
                 ];
                 break;
         }
