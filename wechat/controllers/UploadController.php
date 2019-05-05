@@ -19,12 +19,14 @@ class UploadController extends CommonController
         return $behaviors;
     }
 
-    public function actionUpload($type='images',$is_return=false)
+    public function actionUpload($type='images',$user_id=null,$is_return=false)
     {
         $upload = new UploadedFile();
         $file = $upload->getInstanceByName(key($_FILES));
         //相对路径
-        $relative_path =  $this->root_dir.'/uploads/'.$type.'/'.date('Y-m-d').'/';
+        $relative_path =  $this->root_dir.'/uploads/'.$type.(is_null($user_id)?'':'/'.$user_id).'/'.date('Y-m-d').'/';
+
+
         //保存目录
         $path = $relative_path;
         if (!file_exists($path)) {
@@ -44,7 +46,7 @@ class UploadController extends CommonController
         if($is_return){
             return $result;
         }else{
-            $this->asJson($result);
+            return $this->asJson($result);
         }
     }
 

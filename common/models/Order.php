@@ -128,6 +128,7 @@ class Order extends BaseModel
         $model_order = $this;
         $model_order->no = self::getOrderNo();
         $model_order->uid = $model_user->id;
+        $model_order->area_id = empty($model_user->area_id)?0:$model_user->area_id;
         $model_order->money = !empty($money['money'])?$money['money']:0.00;
         $model_order->pay_money = !empty($money['pay_money'])?$money['pay_money']:0.00;
         $model_order->freight_money = !empty($money['freight_money'])?$money['freight_money']:0.00;
@@ -316,7 +317,26 @@ class Order extends BaseModel
             throw new \Exception('订单保存异常');
         }
     }
-
+    /**
+     * 修改订单行政区
+     * @param $id int 订单id
+     * @param $area_id int 行政区id
+     * @throws
+     * */
+    public static function modArea($id,$area_id)
+    {
+        if(empty($id)) throw new \Exception('订单数据异常');
+        //查询订单信息
+        $model = self::findOne($id);
+        if(empty($model)) throw new \Exception('操作对象异常');
+        if($model['area_id']!=$area_id){
+            $model->area_id = $area_id;
+            $save_bool = $model->save(false);
+            if(!$save_bool){
+                throw new \Exception('订单保存异常');
+            }
+        }
+    }
     /**
      * 自动添加时间戳，序列化参数
      * @return array

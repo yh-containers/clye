@@ -11,6 +11,9 @@ class CheckWxLogin extends BaseObject
     public function init()
     {
         parent::init();
+        if(!YII_DEBUG){
+            return;
+        }
         $session = \Yii::$app->session;
         $request = \Yii::$app->request;
         if($request->isGet && !$session->has('user_info')){//验证用户是否登录状态

@@ -143,7 +143,7 @@ $this->params = array_merge($this->params,[
                 <?php if(isset($current_step_info['handle']) && (in_array('delete',$current_step_info['handle']))){?>
                     <a href="javascript:;" onclick="$.common.reqInfo(this,{confirm_title:'是否删除订单'})" data-conf="{url:'<?=\yii\helpers\Url::to(['order/del'])?>',data:{id:<?=$model['id']?>},success:del_order}" class="mod_btn bg_orange">删除订单</a>
                 <?php }?>
-                <a href="javascript:;" class="mod_btn bg_border">联系客服</a>
+                <a href="tel:<?=\wechat\widgets\SysSetting::widget(['type'=>'normal','field'=>'kf_tel'])?>" class="mod_btn bg_border">联系客服</a>
             </div>
         </div>
     </div>

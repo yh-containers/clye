@@ -45,6 +45,12 @@ $this->params = [
                         </div>
                     </div>
                     <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-2 control-label">客服电话</label>
+                        <div class="col-sm-10">
+                            <input type="text" maxlength="50" class="form-control" name="content[kf_tel]" value="<?= isset($normal_content['kf_tel'])?$normal_content['kf_tel']:''?>" placeholder="客服电话">
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <label for="inputEmail3" class="col-sm-2 control-label">qq</label>
                         <div class="col-sm-10">
                             <input type="text" maxlength="50" class="form-control" name="content[qq]" value="<?= isset($normal_content['qq'])?$normal_content['qq']:''?>" placeholder="qq">

@@ -52,10 +52,27 @@
                                  <td><?=$model['money']?></td>
                                  <td>支付</td>
                                  <td><?=$model['pay_money']?></td>
+                                 <td></td>
+                                 <td></td>
+                                 <td>订单行政区</td>
+                                 <td>
+                                     <select id="area-id"  data-id="<?=$model['id']?>" class="form-control">
+                                         <option value="">选择行政区</option>
+                                         <?php foreach($area as $vo) {?>
+                                             <option value="<?=$vo['id']?>" <?=$vo['id']==$model['area_id']?'selected':''?>><?=$vo['name']?></option>
+                                         <?php }?>
+                                     </select>
+                                 </td>
+                             </tr>
+                             <tr>
                                  <td>运费</td>
                                  <td><?=$model['freight_money']?></td>
                                  <td>税费</td>
                                  <td><?=$model['taxation_money']?></td>
+                                 <td></td>
+                                 <td></td>
+                                 <td></td>
+                                 <td></td>
                              </tr>
 
                              <tr>
@@ -253,6 +270,26 @@
                 //请求数据
                 reqInfo(href,req_data,confirm_title)
             }
+        })
+
+        $("#area-id").change(function(){
+            var area_id = $(this).val()
+            var id = $(this).data('id')
+            if(!area_id){
+                layer.msg('请选择订单行政区')
+                return false;
+            }
+
+            layer.confirm('是否更改订单行政区',function(){
+                var index = layer.load(3)
+                $.get("<?=\yii\helpers\Url::to(['mod-area'])?>",{area_id:area_id,id:id},function(result){
+                    layer.close(index)
+                    layer.msg(result.msg)
+                    if(result.code==1){
+                        setTimeout(function(){location.reload()},1000)
+                    }
+                })
+            })
         })
 
         function reqInfo(href,req_data,confirm_title){

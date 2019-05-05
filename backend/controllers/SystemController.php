@@ -43,7 +43,7 @@ class SystemController extends CommonController
         $model = $model::findOne($id);
 
         //页面所有节点
-        $node = \common\models\SysNode::find()->asArray()->with('linkNode.linkNode.linkNode.linkNode')->where(['pid'=>0])->orderBy('sort asc')->all();
+        $node = \common\models\SysNode::find()->asArray()->with('linkNode.linkNode.linkNode.linkNode')->where(['pid'=>0,'status'=>1])->orderBy('sort asc')->all();
 
         return $this->render('rolesAdd',[
             'model' => $model,

@@ -4,6 +4,7 @@ namespace common\models;
 
 class SysLocationArea extends BaseModel
 {
+    const CACHE_SETTING_SYS_LOCATION_AREA='CACHE_SETTING_SYS_LOCATION_AREA';
     protected $use_create_time=false;
 
     public static function tableName()
@@ -16,15 +17,15 @@ class SysLocationArea extends BaseModel
      * */
     public static function getCacheData($is_flush=0)
     {
-        $cache_name = 'setting_SysLocationArea';
+//        $cache_name = 'setting_SysLocationArea';
         $cache = \Yii::$app->cache;
 
         if($is_flush){
             //清空缓存
-            $cache->flush();
+            $cache->delete(self::CACHE_SETTING_SYS_LOCATION_AREA);
         }
 
-        $data = $cache->getOrSet($cache_name, function () {
+        $data = $cache->getOrSet(self::CACHE_SETTING_SYS_LOCATION_AREA, function () {
             $data = self::find()->asArray()->orderBy('sort asc')->all();
             return $data;
         });
@@ -45,6 +46,7 @@ class SysLocationArea extends BaseModel
         }elseif ($event->name==self::EVENT_AFTER_UPDATE){
             $content = '系统设置/地区管理/行政区域-更新:'.$object['name'];
         }
+        \Yii::$app->cache->delete(self::CACHE_SETTING_SYS_LOCATION_AREA);
         return $content;
     }
 

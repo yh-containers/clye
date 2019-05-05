@@ -12,7 +12,8 @@
     <link rel="stylesheet" type="text/css" href="<?=\Yii::getAlias('@assets')?>/assets/css/mui.min.css">
     <script type="text/javascript" src="<?=\Yii::getAlias('@assets')?>/assets/js/jquery.min.js"></script>
     <script type="text/javascript" src="<?=\Yii::getAlias('@assets')?>/assets/js/mui.min.js"></script>
-
+    <link rel="stylesheet" href="/assets/layui-v2.4.5/css/layui.css">
+    <script src="/assets/layui-v2.4.5/layui.js"></script>
 </head>
 
 <?php if (isset($this->blocks['style'])): ?>
@@ -30,10 +31,8 @@
 
 </body>
 </html>
-<link rel="stylesheet" href="/assets/layui-v2.4.5/css/layui.css">
-<script src="/assets/layui-v2.4.5/layui.js"></script>
-<script type="text/javascript" src="<?=\Yii::getAlias('@assets')?>/assets/js/common.js"></script>
 
+<script type="text/javascript" src="<?=\Yii::getAlias('@assets')?>/assets/js/common.js"></script>
 <script>
     var layer;
     layui.use(['layer'],function(){

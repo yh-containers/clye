@@ -46,6 +46,7 @@ class OrdersController extends CommonController
         return  $this->render('detail',[
             'model' => $model,
             'opt_handle' => $opt_handle,
+            'area' => \common\models\SysLocationArea::getCacheData(),
         ]);
     }
     //已收到付款
@@ -103,6 +104,19 @@ class OrdersController extends CommonController
         $logistics = $this->request->get('logistics');
         try{
             \common\models\Order::optSend($id,2,$logistics);
+        }catch (\Exception $e){
+            throw new \yii\base\UserException($e->getMessage());
+        }
+        $this->asJson(['code'=>1,'msg'=>'操作成功']);
+    }
+
+    //修改订单行政区
+    public function actionModArea()
+    {
+        $id = $this->request->get('id');
+        $area_id = $this->request->get('area_id');
+        try{
+            \common\models\Order::modArea($id,$area_id);
         }catch (\Exception $e){
             throw new \yii\base\UserException($e->getMessage());
         }

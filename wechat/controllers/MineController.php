@@ -187,6 +187,25 @@ class MineController extends CommonController
         }
     }
 
+    //合同文件上传
+    public function actionContractUploadFile()
+    {
+        $id = $this->request->post('id');
+        $model = \common\models\UserContract::findOne($id);
+        if(empty($model)) throw new \yii\base\UserException('合同信息异常');
+        if($model['uid']!=$this->user_id) throw new \yii\base\UserException('合同信息异常2');
+
+        $result = \Yii::$app->runAction('upload/upload',['type'=>'contract','user_id'=>$this->user_id,'is_return'=>1]);
+        if($result['code']==1){
+            $model->file=$result['path'];
+            $model->save(false);
+            return $this->asJson($result);
+        }else{
+            return $this->asJson($result);
+        }
+
+    }
+
     //用户信息
     public function actionData()
     {

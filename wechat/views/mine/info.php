@@ -99,12 +99,17 @@ $(function(){
             elem: '.upload' //绑定元素
             ,url: upload_url //上传接口
             ,data:upoad_data
+            ,before: function(obj){ //obj参数包含的信息，跟 choose回调完全一致，可参见上文。
+                layer.load(); //上传loading
+            }
             ,done: function(res){
                 var item = this.item;
                 $(item).find('img').attr('src',res.path)
+                layer.closeAll('loading'); //关闭loading
                 layer.msg(res.msg)
             }
             ,error: function(){
+                layer.closeAll('loading'); //关闭loading
                 layer.msg('上传异常');
             }
         });
