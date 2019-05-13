@@ -50,6 +50,9 @@ class Sms extends BaseModel
             ['name'=>'用户注册','content'=>'欢迎您登录华祖百草通，您本次注册的验证码为{__VERIFY__}'],
             ['name'=>'短信登录','content'=>'欢迎您登录华祖百草通，您本次登录验证码为{__VERIFY__}'],
             ['name'=>'忘记密码','content'=>'欢迎您登录华祖百草通，您本次找回密码的验证码为{__VERIFY__}'],
+            ['name'=>'修改密码','content'=>'欢迎您登录华祖百草通，您本次找回密码的验证码为{__VERIFY__}'],
+            ['name'=>'验证手机号码','content'=>'欢迎您登录华祖百草通，您本次验证手机号码的验证码为{__VERIFY__}'],
+            ['name'=>'修改手机号码','content'=>'欢迎您登录华祖百草通，您本次更换手机号码的验证码为{__VERIFY__}'],
         ];
         if(is_null($data)){
             return $data;

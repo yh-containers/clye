@@ -26,7 +26,9 @@ $this->params = array_merge($this->params,[
             <div class="pull-left"><i class="icon-hot"></i>热门搜索</div>
         </div>
         <div class="list">
-            <a class="item" href="javascript:;">blackmores</a>
+            <?php foreach($hot_kw as $vo){?>
+                <a class="item" href="<?=\yii\helpers\Url::to(['','keyword'=>$vo['keyword']])?>"><?=$vo['keyword']?></a>
+            <?php }?>
         </div>
     </div>
 

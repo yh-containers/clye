@@ -28,7 +28,6 @@ class BaseModel extends ActiveRecord implements ILogs
     //创建时间
     public static function getStatusName($status)
     {
-
         return isset(self::$fields_status[$status])?self::$fields_status[$status]:'--';
     }
 

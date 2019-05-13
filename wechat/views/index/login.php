@@ -58,7 +58,7 @@ $this->title='用户登录';
     </div>
 
     <div class="login_other">
-        <a href="javascript:;">
+        <a href="<?=\yii\helpers\Url::to(['index/index','login_type'=>'wechat'])?>">
             <span>其他登录方式</span>
             <i class="icon"></i>
         </a>

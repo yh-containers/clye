@@ -16,7 +16,7 @@ class Footer extends Widget
     public function run()
     {
         //获取商品数据
-        $cart_num = \common\models\UserCart::find()->where(['uid'=>\Yii::$app->controller->user_id])->sum('num');
+        $cart_num = \common\models\UserCart::find()->joinWith('linkGoods',false,'RIGHT JOIN')->where(['uid'=>\Yii::$app->controller->user_id])->sum('num');
 
         return $this->render('footer',[
             'current_active'=>$this->current_active,

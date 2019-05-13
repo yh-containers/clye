@@ -36,8 +36,7 @@ class CheckAuth extends Behavior
                             \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
                             \Yii::$app->response->data = array(
                                 'code' => 0,
-                                'msg' => '无权操作',
-                                'url' => \yii\helpers\Url::to(['index/login'])
+                                'msg' => '无权操作'
                             );
                             \Yii::$app->response->send();
                             exit;//直接退出

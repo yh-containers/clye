@@ -38,7 +38,7 @@ class RecordOptLog extends Component
             $logs_index =  \common\models\SysOptLogs::getTypeIntro(null,null,$event->name);
             $object = $event->sender;
             if(!property_exists($object, self::EVENT_PROP_FIELD) || (property_exists($object, self::EVENT_PROP_FIELD) && $object[self::EVENT_PROP_FIELD])){
-//                $table_name = $object::tableName();
+                $table_name = $object::tableName();
                 if(empty($object::$is_ignore)){
                     //说明
                     $intro = property_exists($object,'opt_log_intro') && !empty($object::$opt_log_intro) ? $object::$opt_log_intro : null;
@@ -54,9 +54,9 @@ class RecordOptLog extends Component
                     $mod_info = property_exists($object,'opt_log_intro_extra') && $object::$opt_log_intro_extra ? $object::$opt_log_intro_extra:(property_exists($event,'changedAttributes')?$event->changedAttributes:[]);
                     //记录操作日志
                     \common\models\SysOptLogs::recordData($logs_index?$logs_index:-1,$content,$mod_info);
+                    self::$is_record=true;
                 }
             }
         }
-        self::$is_record=true;
     }
 }

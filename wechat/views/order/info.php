@@ -9,6 +9,7 @@ $this->params = array_merge($this->params,[
 <form id="form">
     <input type="hidden" name="<?=\Yii::$app->request->csrfParam?>" value="<?= \Yii::$app->request->csrfToken ?>"/>
     <input type="hidden" name="channel" value="<?=$channel?>"/>
+    <input type="hidden" name="channel_g_data" value="<?=$channel_g_data?>"/>
     <input type="hidden" name="addr_id" value="<?=$model_addr['id']?>"/>
     <input type="hidden" name="gid" value="<?=$gid?>"/>
     <input type="hidden" name="num" value="<?=$num?>"/>
@@ -79,7 +80,7 @@ $this->params = array_merge($this->params,[
                 <ul class="buy_chart">
                     <li class="buy_chart_item">
                         <p class="text">商品金额：</p>
-                        <p class="price">¥<em><?=$money['money']?></em></p>
+                        <p class="price">¥<em><?=$money['goods_money']?></em></p>
                     </li>
                     <li class="buy_chart_item">
                         <p class="text">运费：</p>

@@ -7,7 +7,7 @@ $this->params = array_merge($this->params,[
 
 <?php $this->beginBlock('content')?>
 <div class="header">
-    <a class="back" href="javascript:history.go(-1)"></a>
+    <a class="back" href="<?=\yii\helpers\Url::to(['index'])?>"></a>
     <h4><?=$this->title?></h4>
 </div>
 
@@ -78,14 +78,20 @@ $this->params = array_merge($this->params,[
             <div class="shop-name">
                 <h4>商品清单</h4>
             </div>
-            <?php if(!empty($model['linkOrderGoods'])) foreach($model['linkOrderGoods'] as $vo){?>
+            <?php
+            //商品金额
+            $goods_money  = 0.00;
+            if(!empty($model['linkOrderGoods']))
+                foreach($model['linkOrderGoods'] as $vo){
+                    $goods_money=$vo['per_price']*$vo['num'];
+            ?>
             <div class="row clearfix">
                 <img src="<?=\common\models\Goods::getCoverImg($vo['img'])?>">
                 <div class="prod-desc">
                     <span class="name"><?=$vo['name']?></span>
                     <span class="level clearfix">
-                            <span class="price">¥<em><?=$vo['price']?></em></span>
-                            <span class="mun">x1</span>
+                            <span class="price">¥<em><?=$vo['per_price']?></em></span>
+                            <span class="mun">x<?=$vo['num']?></span>
                         </span>
                 </div>
             </div>
@@ -105,9 +111,9 @@ $this->params = array_merge($this->params,[
         </div>
 
         <ul class="order_pay_info">
+            <li><span>商品金额</span><em>¥<i><?=sprintf('%.2f',$goods_money)?></i></em></li>
             <li><span>税费</span><em>¥<i><?=$model['taxation_money']?></i></em></li>
-            <li><span>运费</span><em>¥<i<?=$model['freight_money']?></i></em></li>
-            <li><span>订单金额</span><em>¥<i><?=$model['money']?></i></em></li>
+            <li><span>运费</span><em>¥<i><?=$model['freight_money']?></i></em></li>            
 
             <div class="total"><span>实付总额</span><em class="price">¥<i><?=$model['pay_money']?></i></em></div>
         </ul>
@@ -142,8 +148,15 @@ $this->params = array_merge($this->params,[
                        data-conf="{url:'<?=\yii\helpers\Url::to(['order/receive'])?>',data:{id:<?=$model['id']?>},success:receive_success}" class="mod_btn bg_orange"
                     ">确认收货</a>
                 <?php }?>
-                <?php if(isset($current_step_info['handle']) && (in_array('delete',$current_step_info['handle']))){?>
+                <?php
+                    $is_delete = false;
+                if(isset($current_step_info['handle']) && in_array('delete', $current_step_info['handle']) ) {
+
+                ?>
                     <a href="javascript:;" onclick="$.common.reqInfo(this,{confirm_title:'是否删除订单'})" data-conf="{url:'<?=\yii\helpers\Url::to(['order/del'])?>',data:{id:<?=$model['id']?>},success:del_order}" class="mod_btn bg_orange">删除订单</a>
+                <?php }?>
+                <?php if(isset($current_step_info['handle']) && (in_array('cancel_order',$current_step_info['handle']))){?>
+                    <a href="javascript:;" onclick="$.common.reqInfo(this,{confirm_title:'是否取消订单'})" data-conf="{url:'<?=\yii\helpers\Url::to(['order/cancel-order'])?>',data:{id:<?=$model['id']?>},success:cancel_order}" class="mod_btn bg_orange">取消订单</a>
                 <?php }?>
                 <a href="tel:<?=\wechat\widgets\SysSetting::widget(['type'=>'normal','field'=>'kf_tel'])?>" class="mod_btn bg_border">联系客服</a>
             </div>
@@ -154,6 +167,13 @@ $this->params = array_merge($this->params,[
 
 <?php $this->beginBlock('script')?>
 <script>
+    //取消订单刷新页面
+    function cancel_order(res){
+        layui.layer.msg(res.msg)
+        if(res.code==1){
+            setTimeout(function(){location.reload()},1000)
+        }
+    }
     //删除订单刷新页面
     function del_order(res){
         layui.layer.msg(res.msg)

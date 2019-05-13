@@ -6,7 +6,8 @@
 ?>
 <?php $this->beginBlock('style')?>
     <style>
-        .layui-table[lay-size=lg] td{padding: 9px 15px; }
+        .layui-table[lay-size=lg] td,.layui-table[lay-size=lg] th{padding: 12px 10px; }
+        .box-body>a{margin: 5px 2px;}
     </style>
 <?php $this->endBlock()?>
 <?php $this->beginBlock('content')?>
@@ -40,36 +41,24 @@
                                  <td><?=$model['linkUser']['username']?></td>
                                  <td>状态</td>
 
-                                 <td colspan="3"><?=
-                                     \common\models\Order::getStepFlowInfo($model['step_flow'],'name')
-                                     ?></td>
+                                 <td colspan="3">
+                                    <span class="btn btn-success">
+                                    <?php
+                                     $state_info = $model->getOrderStatusInfo();
+                                     echo $state_info['name'].'('.\common\models\Order::getStepFlowInfo($model['step_flow'],'name').')';
+                                     ?></span>
+                                 </td>                                     
                              </tr>
                              <tr>
                                  <td>订单金额</td>
                                  <td><?=$model['money']?></td>
-                                 <td>支付</td>
-                                 <td><?=$model['pay_money']?></td>
-                                 <td></td>
-                                 <td></td>
-                                 <td>订单行政区</td>
-                                 <td>
-                                     <select id="area-id"  data-id="<?=$model['id']?>" class="form-control">
-                                         <option value="">选择行政区</option>
-                                         <?php foreach($area as $vo) {?>
-                                             <option value="<?=$vo['id']?>" <?=$vo['id']==$model['area_id']?'selected':''?>><?=$vo['name']?></option>
-                                         <?php }?>
-                                     </select>
-                                 </td>
-                             </tr>
-                             <tr>
                                  <td>运费</td>
                                  <td><?=$model['freight_money']?></td>
                                  <td>税费</td>
                                  <td><?=$model['taxation_money']?></td>
-                                 <td></td>
-                                 <td></td>
-                                 <td></td>
-                                 <td></td>
+                                 <td>支付</td>
+                                 <td><?=$model['pay_money']?></td>                                 
+                                 
                              </tr>
 
                              <tr>
@@ -85,12 +74,19 @@
                              <tr>
                                  <td>收货时间</td>
                                  <td><?=$model['receive_end_time']?date('Y-m-d H:i:s',$model['receive_end_time']):''?></td>
-                                 <td></td>
-                                 <td></td>
-                                 <td></td>
-                                 <td></td>
                                  <td>完成时间</td>
                                  <td><?=$model['complete_time']?></td>
+                                 <td>订单行政区</td>
+                                <td>
+                                     <select id="area-id"  data-id="<?=$model['id']?>" class="form-control">
+                                         <option value="">选择行政区</option>
+                                         <?php foreach($area as $vo) {?>
+                                             <option value="<?=$vo['id']?>" <?=$vo['id']==$model['area_id']?'selected':''?>><?=$vo['name']?></option>
+                                         <?php }?>
+                                     </select>
+                                 </td>
+                                 <td>跟进管理员</td>
+                                 <td><?=$model['linkFlowManager']['name']?></td>
                              </tr>
                              <tr style="background: #f5f5f5;font-weight: bold">
                                  <td colspan="8">收货地址</td>
@@ -124,6 +120,66 @@
             </div>
              <div class="box">
                  <div class="box-header with-border">
+                     <h3>合同资料</h3>
+                 </div>
+                 <div class="box-body">
+                     <table class="layui-table"  lay-size="lg">
+
+                         <tbody>
+                         <tr>
+                             <td>公司名:</td>
+                             <td><?=$model['linkOrderContract']['name']?></td>
+                             <td>公司地址</td>
+                             <td><?=$model['linkOrderContract']['addr']?></td>
+                             <td>法人代表:</td>
+                             <td><?=$model['linkOrderContract']['f_name']?></td>
+                             <td>委托人代表</td>
+                             <td><?=$model['linkOrderContract']['w_name']?></td>
+                             
+                         </tr>
+                         <tr>
+                             <td>合同金额</td>
+                             <td><?=$model['linkOrderContract']['money']?></td>
+                             <td>创建日期</td>
+                             <td>
+                                <?=$model['linkOrderContract']['create_time']?date('Y-m-d H:i:s',$model['linkOrderContract']['create_time']):'--'?>
+                            </td>
+                            <td>合同开始时间:</td>
+                             <td><?=$model['linkOrderContract']['start_time']?date('Y-m-d H:i',$model['linkOrderContract']['start_time']):'--'?></td>
+                             <td>合同截止时间</td>
+                             <td><?=$model['linkOrderContract']['end_time']?date('Y-m-d H:i',$model['linkOrderContract']['end_time']):'--'?></td>
+                             
+                         </tr>
+                         <tr>
+                            <td>合同类容</td>
+                            <td colspan="3"><a href="<?=\yii\helpers\Url::to(['contract','oid'=>$model['id']])?>" class="btn btn-warning" target="_blank">查看合同详情</a></td>
+                            <td>合同附件</td>
+                            <td colspan="3">
+                                <a href="javascript:;" class="btn btn-success" id="upload-contract" style="margin-right:20px" lay-data="{ url: '<?= \yii\helpers\Url::to(['orders/contract-file','id'=>$model['linkOrderContract']['id']])?>',data:{_csrf:'<?= Yii::$app->request->csrfToken ?>'}}" >
+                                    <span class="glyphicon glyphicon-open" aria-hidden="true"></span>
+                                    上传合同附件
+                                </a>
+                                <?php if($model['linkOrderContract']['file']){?>
+                                    <a href="<?=$model['linkOrderContract']['file']?>" class="btn btn-warning" target="_blank">
+                                        <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+                                        点击查看合同文件
+                                    </a>
+                                 <?php }else{?>
+                                     暂未上传合同文件
+                                 <?php }?>
+                                 
+                            </td>
+                             
+                         </tr>
+
+                         </tbody>
+                     </table>
+                 </div>
+
+             </div>
+
+             <div class="box">
+                 <div class="box-header with-border">
                      <h3>订单商品</h3>
                  </div>
                  <div class="box-body">
@@ -131,9 +187,7 @@
                          <thead>
                          <tr>
                              <th>商品名称</th>
-                             <th>商品价格</th>
-                             <th>手续费</th>
-                             <th>手续费后价格</th>
+                             <th>商品购买价格</th>
                              <th>税费</th>
                              <th>运费</th>
                              <th>数量</th>
@@ -144,8 +198,6 @@
                          <?php if(!empty($model)) foreach($model['linkOrderGoods'] as $vo){?>
                              <tr>
                                  <td><?=$vo['name']?></td>
-                                 <td><?=$vo['price']?></td>
-                                 <td><?=$vo['per']?></td>
                                  <td><?=$vo['per_price']?></td>
                                  <td><?=$vo['freight_money']?></td>
                                  <td><?=$vo['taxation_money']?></td>
@@ -167,22 +219,26 @@
                 </div>
                 <div class="box-body">
                     <?php if(in_array('sure_pay',$opt_handle)){?>
-                        <a href="javascript:;" class="btn btn-default opt-order" data-href="<?=\yii\helpers\Url::to(['sure-pay'])?>" data-confirm_title="确定已收到付款?" data-req_data="{id:<?=$model['id']?>}" >确认付款</a>
+                        <a href="javascript:;" class="btn btn-primary opt-order" data-href="<?=\yii\helpers\Url::to(['sure-pay'])?>" data-confirm_title="确定已收到付款?" data-req_data="{id:<?=$model['id']?>}" >确认付款</a>
+                    <?php }?>
+                    <?php if(in_array('cancel_order',$opt_handle)){?>
+                        <a href="javascript:;" class="btn btn-default opt-order" data-href="<?=\yii\helpers\Url::to(['cancel-order'])?>" data-confirm_title="确定取消订单?" data-req_data="{id:<?=$model['id']?>}" >取消订单</a>
                     <?php }?>
                     <?php if(in_array('product_up',$opt_handle)){?>
-                        <a href="javascript:;" class="btn btn-default opt-order" data-href="<?=\yii\helpers\Url::to(['product-up'])?>" data-confirm_title="是否开始生产?" data-req_data="{id:<?=$model['id']?>}" >开始生产</a>
+                        <a href="javascript:;" class="btn btn-primary opt-order" data-href="<?=\yii\helpers\Url::to(['product-up'])?>" data-confirm_title="是否开始生产?" data-req_data="{id:<?=$model['id']?>}" >开始生产</a>
                     <?php }?>
                     <?php if(in_array('product_down',$opt_handle)){?>
-                        <a href="javascript:;" class="btn btn-default opt-order"  data-href="<?=\yii\helpers\Url::to(['product-down'])?>" data-confirm_title="生产结束?" data-req_data="{id:<?=$model['id']?>}">生产结束</a>
+                        <a href="javascript:;" class="btn btn-primary opt-order"  data-href="<?=\yii\helpers\Url::to(['product-down'])?>" data-confirm_title="生产结束?" data-req_data="{id:<?=$model['id']?>}">生产结束</a>
                     <?php }?>
                     <?php if(in_array('send_up',$opt_handle)){?>
-                        <a href="javascript:;" class="btn btn-default opt-order"  data-href="<?=\yii\helpers\Url::to(['send-up'])?>" data-confirm_title="是否准备发货?" data-req_data="{id:<?=$model['id']?>}">准备发货</a>
+                        <a href="javascript:;" class="btn btn-primary opt-order"  data-href="<?=\yii\helpers\Url::to(['send-up'])?>" data-confirm_title="是否准备发货?" data-req_data="{id:<?=$model['id']?>}">准备发货</a>
                     <?php }?>
                     <?php if(in_array('send_down',$opt_handle)){?>
 
-                        <a href="javascript:;" class="btn btn-default opt-order send-order"  data-href="<?=\yii\helpers\Url::to(['send-down'])?>" data-confirm_title="确定已发货？" data-req_data="{id:<?=$model['id']?>}" >发货完成</a>
+                        <a href="javascript:;" class="btn btn-primary opt-order send-order"  data-href="<?=\yii\helpers\Url::to(['send-down'])?>" data-confirm_title="确定已发货？" data-req_data="{id:<?=$model['id']?>}" >发货完成</a>
                     <?php }?>
-                    <a href="<?=\yii\helpers\Url::to(['contract','oid'=>$model['id']])?>" target="_blank" class="btn btn-default">查看合同信息</a>
+                    <a href="javascript:;" class="btn btn-success point-manager"  data-href="<?=\yii\helpers\Url::to(['send-down'])?>"  data-id="<?=$model['id']?>" >指派员工</a>
+                    <a href="<?=\yii\helpers\Url::to(['contract','oid'=>$model['id']])?>" target="_blank" class="btn btn-info">查看合同信息</a>
 
                 </div>
 
@@ -224,10 +280,23 @@
             <input type="text" maxlength="100" class="form-control" name="company"  placeholder="物流公司">
         </div>
     </div>
-    <div class="form-group">
+   <!-- <div class="form-group">
         <label for="inputPassword3" class="col-sm-3 control-label">运费:</label>
         <div class="col-sm-8 margin-bottom">
             <input type="number"  class="form-control" name="money"  placeholder="0.00">
+        </div>
+    </div>-->
+</div>
+
+<div id="point-manager" style="display: none;">
+    <div class="form-group">
+        <label for="inputPassword3" class="col-sm-3 control-label">选择员工:</label>
+        <div class="col-sm-8 margin-bottom">
+            <select name="manage_uid"  class="form-control">
+                <?php foreach($manager as $vo){?>
+                    <option value="<?=$vo['id']?>"><?=$vo['name']?></option>
+                <?php }?>
+            </select>
         </div>
     </div>
 </div>
@@ -239,6 +308,39 @@
 <?php $this->beginBlock('script')?>
 <script>
     $(function(){
+        layui.use(['layer','upload'], function(){
+            var upload = layui.upload;
+            var layer = layui.layer;
+
+            $.common.uploadFile(upload,'#upload-contract',(res)=>{
+                layer.msg(res.msg)
+                if(res.code==1){
+                    setTimeout(function(){location.reload()},1000)
+                }
+            })
+
+        });
+        $(".point-manager").click(function(){
+            var req_data = {}
+            req_data.id=$(this).data('id')
+            layer.open({
+                type:1
+                ,title:'指派员工'
+                ,btn: ['确认', '取消']
+                ,area:['400px','300px']
+                ,content:$("#point-manager")
+                ,yes: function(index, layero){
+                    //按钮【按钮一】的回调
+                    //员工id
+                    req_data.uid = $("select[name='manage_uid']").val()
+                    console.log(req_data);
+                    //请求数据
+                    reqInfo("<?=\yii\helpers\Url::to(['point-manager'])?>",req_data,'是否指派该员工')
+                }
+            })
+        })
+
+
         $(".opt-order").click(function(){
             var href = $(this).data('href')
             var req_data = $(this).data('req_data')

@@ -142,6 +142,18 @@ class IndexController extends CommonController
         ]);
     }
 
+    /**
+     * Logout action.
+     *
+     * @return string
+     */
+    public function actionLogout()
+    {
+        $session = \yii::$app->session;
+        $session->destroy();
+
+        return $this->redirect('login');
+    }
 
     //富文本页面
     private function _editPage($type,$title='')
@@ -161,5 +173,6 @@ class IndexController extends CommonController
             'list' => $list,
         ]);
     }
+
 
 }

@@ -2,6 +2,7 @@
 namespace common\components;
 
 use common\models\Order;
+use common\models\SysManager;
 use yii\base\Behavior;
 use yii\db\ActiveRecord;
 
@@ -50,7 +51,7 @@ class OrderBehavior extends Behavior
 
                 if(array_key_exists('is_produce',$changedAttributes)){
                     $name = \common\models\Order::getProduceInfo($object->is_produce,'name');
-                    \common\models\UserOrderLogs::recordLog($object->id,'调整订单信息','调整订单生成状态为:'.$name,0,[],1);
+                    \common\models\UserOrderLogs::recordLog($object->id,'调整订单信息',''.$name,0,[],1);
                     if($object->is_produce==2){
                         //订单已生产完成
                         \common\models\WxTempMsg::sendMessage($object->uid,
@@ -69,7 +70,7 @@ class OrderBehavior extends Behavior
 
                 if(array_key_exists('is_send',$changedAttributes)){
                     $name = \common\models\Order::getSendInfo($object->is_send,'name');
-                    \common\models\UserOrderLogs::recordLog($object->id,'调整订单信息','调整订单发货状态为:'.$name,0,[],1);
+                    \common\models\UserOrderLogs::recordLog($object->id,'调整订单信息',''.$name,0,[],1);
 
                     if($object->is_send==2){
                         //查询订单物流信息
@@ -92,7 +93,7 @@ class OrderBehavior extends Behavior
 
                 if(array_key_exists('is_receive',$changedAttributes)){
                     $name = \common\models\Order::getReceiveInfo($object->is_receive,'name');
-                    \common\models\UserOrderLogs::recordLog($object->id,'调整订单信息','调整订单收货状态为:'.$name,0,[],1);
+                    \common\models\UserOrderLogs::recordLog($object->id,'调整订单信息',''.$name,0,[],1);
 
                     if($object->is_receive==2){
                         //签收完成
@@ -112,7 +113,7 @@ class OrderBehavior extends Behavior
                 //更新
                 if(array_key_exists('status',$changedAttributes)){
                     $name = \common\models\Order::getStatusInfo($object->status,'name');
-                    \common\models\UserOrderLogs::recordLog($object->id,'调整订单信息','调整订单状态为:'.$name,0,[],1);
+                    \common\models\UserOrderLogs::recordLog($object->id,'调整订单信息',''.$name,0,[],1);
 
                     if($object->status==2){
                         //交易失败
@@ -128,6 +129,12 @@ class OrderBehavior extends Behavior
                             \Yii::$app->urlManagerWx->createAbsoluteUrl(['order/detail','id'=>$object->id],true)
                         );
                     }
+                }
+
+                //指派管理员
+                if(array_key_exists('m_uid',$changedAttributes)){
+                    $manager_info =  \common\models\SysManager::findOne($object->m_uid);
+                    \common\models\UserOrderLogs::recordLog($object->id,'调整订单跟进人员',''.$manager_info['name']);
                 }
 
             }

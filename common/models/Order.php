@@ -8,6 +8,7 @@ class Order extends BaseModel
 {
     use SoftDelete;
     public $check_channel = false;
+    public $channel_g_data;//渠道数据
     public static function tableName()
     {
         return '{{%order}}';
@@ -57,6 +58,15 @@ class Order extends BaseModel
                     $gid[$vo['gid']] =$vo['num'];
                 }
             }
+        }
+        if($this->check_channel=='once_again'){
+            $channel_g_data = array_filter(explode(',',$this->channel_g_data));
+            foreach ($channel_g_data as $vo){
+                $arr = explode('-',$vo);
+                if(count($arr)==2){
+                    $gid[$arr[0]] = $arr[1];
+                }
+            }
         }else{
             //指定商品
             $gid[$id] = $num;
@@ -77,7 +87,8 @@ class Order extends BaseModel
         }
         //计算金额相关数据
         $money = [
-            'money' => 0.00 ,//商品总金额
+            'money' => 0.00 ,//总金额
+            'goods_money' => 0.00 ,//商品总金额
             'pay_money' => 0.00 ,//实际支付总金额
             'freight_money' => 0.00 ,//运费金额
             'taxation_money' => 0.00 ,//税费总金额
@@ -90,6 +101,7 @@ class Order extends BaseModel
             $taxation_money = $vo['taxation_money']*$vo['buy_num']; // 税费金额
 
             $money['money'] += $goods_price+$freight_money+$taxation_money;
+            $money['goods_money'] += $goods_price;
             $money['pay_money'] += $goods_per_price+$freight_money+$taxation_money;
             $money['freight_money'] += $freight_money;
             $money['taxation_money'] += $taxation_money;
@@ -105,11 +117,11 @@ class Order extends BaseModel
 
     /**
      * 确认订单
-     * @param $model_user User 当前操作用户
-     * @param $goods_info array 购买的商品
-     * @Param $money array 商品金额汇总
-     * @Param $model_addr array 购买地址
-     * @param $contract array 合同信息
+     * @param User $model_user  当前操作用户
+     * @param array $goods_info  购买的商品
+     * @Param array $money array 商品金额汇总
+     * @Param array $model_addr  购买地址
+     * @param array $contract  合同信息
      * @throws
      * @return void
      * */
@@ -129,6 +141,30 @@ class Order extends BaseModel
         $model_order->no = self::getOrderNo();
         $model_order->uid = $model_user->id;
         $model_order->area_id = empty($model_user->area_id)?0:$model_user->area_id;
+        //指定选择区域的人
+        if(!empty($model_order->area_id)){
+            $manager = \common\models\SysManager::find()->asArray()->where(['area_id'=>$model_order->area_id])->orderBy('id asc')->all();
+            if(!empty($manager)){
+                //循环指定同一区的其他人
+                $point_manager_id = $manager[0]['id']; //默认第一个人
+                $cache_name = 'up_point_manager'.$model_order->area_id;
+                $up_manager_id = \Yii::$app->cache->get($cache_name);
+                foreach ($manager as $key=>$vo) {
+                    if($vo['id']==$up_manager_id && isset($manager[$key+1])){
+                        $point_manager_id = $manager[$key+1]['id'];
+                        break;
+                    }elseif (count($manager)-1 == $key){
+                        $point_manager_id = $manager[0]['id'];
+                    }
+                }
+                \Yii::$app->cache->set($cache_name,$point_manager_id);
+
+                //直接指定第一个人
+                $model_order->m_uid= $point_manager_id;
+                $model_order->pm_time= time();
+            }
+        }
+
         $model_order->money = !empty($money['money'])?$money['money']:0.00;
         $model_order->pay_money = !empty($money['pay_money'])?$money['pay_money']:0.00;
         $model_order->freight_money = !empty($money['freight_money'])?$money['freight_money']:0.00;
@@ -223,6 +259,11 @@ class Order extends BaseModel
         $model->status = 1;
         $model->step_flow = 1;//开始制作流程
         $model->pay_time=time();
+
+        //付款直接开始生产
+        $model->is_produce=1;
+        $model->pro_start_time = time();
+
         $save_bool = $model->save(false);
         if(!$save_bool){
             throw new \Exception('订单保存异常');
@@ -244,6 +285,11 @@ class Order extends BaseModel
             //完成生产
             $model->pro_end_time = time();
             $model->step_flow = 2; //进入发货
+
+            //生产完成就是待发货
+            $model->is_send =1;
+            $model->send_end_time = time();
+
         }elseif($state==1){
             $model->pro_start_time = time();
         }
@@ -335,6 +381,30 @@ class Order extends BaseModel
             if(!$save_bool){
                 throw new \Exception('订单保存异常');
             }
+        }
+    }
+    /**
+     * 取消订单
+     * @param $id int 订单id
+     * @param $user_id int 用户id
+     * @param $is_force bool 是否强制取消订单
+     * @throws
+     * */
+    public static function cancelOrder($id,$user_id=0,$is_force=false)
+    {
+        if(empty($id)) throw new \Exception('订单数据异常');
+        //查询订单信息
+        $where['id'] = $id;
+        $user_id!==0 && $where['uid'] = $user_id;
+        $model = self::find()->where($where)->one();
+        if(empty($model)) throw new \Exception('操作对象异常');
+        if($model['status'] && !$is_force) throw new \Exception('正在处理订单无法取消');
+
+        $model->status = 2;
+        $model->cancel_time = time();
+        $save_bool = $model->save(false);
+        if(!$save_bool){
+            throw new \Exception('订单保存异常');
         }
     }
     /**
@@ -440,9 +510,9 @@ class Order extends BaseModel
     public static function getStatusInfo($type=null,$field=null)
     {
         $data = [
-            ['name'=>'待付款','intro'=>'您的订单已下单成功，请联系商家进行付款','handle'=>['delete'],'opt_handle'=>['sure_pay']],
+            ['name'=>'待付款','intro'=>'您的订单已下单成功，请联系商家进行付款','handle'=>['cancel_order'],'opt_handle'=>['sure_pay','cancel_order']],
             ['name'=>'已付款','intro'=>'您的订单已付款,待商家进行其它操作'],
-            ['name'=>'交易失败','intro'=>'您的订单交易失败'],
+            ['name'=>'已取消','intro'=>'您的订单交易失败','handle'=>['delete']],
             ['name'=>'已完成','intro'=>'您的订单已完成','handle'=>['logistics'=>['is_send'=>2]],'delete'],
         ];
 
@@ -559,7 +629,7 @@ class Order extends BaseModel
     {
         return $this->hasMany(OrderGoods::className(),['oid'=>'id']);
     }
-    //获取订单商品
+    //获取订单合同
     public function getLinkOrderContract()
     {
         return $this->hasOne(UserContract::className(),['oid'=>'id']);
@@ -568,5 +638,15 @@ class Order extends BaseModel
     public function getLinkOrderLogs()
     {
         return $this->hasMany(UserOrderLogs::className(),['oid'=>'id'])->orderBy('id desc');
+    }
+    //跟进人
+    public function getLinkFlowManager()
+    {
+        return $this->hasOne(SysManager::className(),['id'=>'m_uid']);
+    }
+    //行政区
+    public function getLinkLocationArea()
+    {
+        return $this->hasOne(SysLocationArea::className(),['id'=>'area_id']);
     }
 }

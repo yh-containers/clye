@@ -10,7 +10,33 @@ $this->params = [
 
     <div class="box">
         <div class="box-header with-border">
-            <a href="<?=\yii\helpers\Url::to(['add'])?>" class="btn bg-olive margin">新增</a>
+            <div class="row">
+                <div class="col-sm-8">
+                    <a href="<?=\yii\helpers\Url::to(['add'])?>" class="btn bg-olive margin">新增</a>
+
+                </div>
+                <div class="col-sm-4">
+                    <div class="col-sm-4">
+                        <select name="cid" class="form-control">
+                            <option value="">请选择分类</option>
+                            <?php foreach($top_cate as $vo) {?>
+                                <option value="<?=$vo['id']?>" <?=$vo['id']==$cid?'selected':''?>><?=$vo['name']?></option>
+                            <?php }?>
+                        </select>
+                    </div>
+                    <div class="col-sm-6">
+                    <form>
+                        <div class="input-group">
+                            <input type="text" name="keyword" value="<?=$keyword?>" placeholder="商品名称" class="form-control">
+                            <span class="input-group-btn">
+                              <button type="submit" class="btn btn-info btn-flat">搜索</button>
+                            </span>
+                        </div>
+                    </form>
+                    </div>
+                </div>
+
+            </div>
         </div>
         <!-- /.box-header -->
         <div class="box-body">
@@ -56,4 +82,16 @@ $this->params = [
     </div>
 
 
+<?php $this->endBlock()?>
+<?php $this->beginBlock('script')?>
+    <script>
+        $(function(){
+            $("select[name='cid']").change(function(){
+                var cid = $(this).val()
+                var url = "<?=\yii\helpers\Url::to([''])?>"
+                window.location.href=url+(url.indexOf('?')===-1?'?':'&')+'cid='+cid
+
+            })
+        })
+    </script>
 <?php $this->endBlock()?>

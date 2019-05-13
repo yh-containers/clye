@@ -9,6 +9,8 @@ class User extends BaseModel
     //h5注册
     const SCENARIO_USER_WECHAT_REG= 'SCENARIO_USER_WECHAT_REG';
     const SCENARIO_USER_WECHAT_FORGET= 'SCENARIO_USER_WECHAT_FORGET';
+    const SCENARIO_USER_MOD_PWD= 'SCENARIO_USER_MOD_PWD';
+    const SCENARIO_USER_MOD_PHONE= 'SCENARIO_USER_MOD_PHONE';
 
     use SoftDelete;
     public $verify;
@@ -234,6 +236,68 @@ class User extends BaseModel
         return $model_user;
     }
 
+    //设置微信信息
+    public function setWxInfo($event,$attribute)
+    {
+        //验证是否有微信授权信息
+        if(\Yii::$app->session->has(\common\components\Wechat::WX_AUTH_USER_INFO)){
+            $wx_info = \Yii::$app->session->get(\common\components\Wechat::WX_AUTH_USER_INFO);
+
+            !empty($wx_info['nickname']) && $this->setAttribute('username',$wx_info['nickname']);
+            !empty($wx_info['sex']) && $this->setAttribute('sex',$wx_info['sex']);
+            !empty($wx_info['headimgurl']) && $this->setAttribute('face',$wx_info['headimgurl']);
+            !empty($wx_info['openid']) && $this->setAttribute('openid',$wx_info['openid']);
+            !empty($wx_info['access_token']) && $this->setAttribute('wx_access_token',$wx_info['access_token']);
+            !empty($wx_info['refresh_token']) && $this->setAttribute('refresh_token',$wx_info['refresh_token']);
+            $this->setAttribute('wx_auth_time',time());
+        }
+
+        return empty($this->openid)?null:$this->openid;
+    }
+
+    //操作-修改密码
+    public function modPwd($mod_info)
+    {
+        if(empty($mod_info['verify']))  throw new \Exception('请输入验证码');
+        if(empty($mod_info['password']))  throw new \Exception('请输入密码');
+        if(strlen($mod_info['password'])<6)  throw new \Exception('密码不得低于6位');
+        if(strlen($mod_info['password'])>16)  throw new \Exception('密码不得高于16位');
+        if(empty($mod_info['re_password']))  throw new \Exception('请输入确认密码');
+        if($mod_info['re_password']!=$mod_info['password'])  throw new \Exception('两次密码不一致');
+
+        //验证码
+        Sms::checkVerify($this->phone,$mod_info['verify'],3);
+
+        $this->password = $mod_info['password'];
+        $bool = $this->save(false);
+        if(!$bool){
+            throw new \Exception('修改异常');
+        }
+    }
+    //操作-修改手机号码
+    public function modPhone($mod_info)
+    {
+        if(empty($mod_info['verify']))  throw new \Exception('请输入原始手机号的验证码');
+        if(empty($mod_info['new_verify']))  throw new \Exception('请输入更换的手机验证码');
+        if(empty($mod_info['new_phone']))  throw new \Exception('请输入更换的手机号');
+        if(!preg_match('/^1[0-9]{10}$/',$mod_info['new_phone']))  throw new \Exception('请输入正确的手机号码');
+        if($this->phone==$mod_info['new_phone'])  throw new \Exception('更换的手机号码不能跟原手机号一致');
+        //验证新手机号码是否已注册
+        if(self::find()->where(['phone'=>$mod_info['new_phone']])->count()){
+            throw new \Exception('更换的手机号已被注册,无法进行更换');
+        }
+
+        //验证码
+        Sms::checkVerify($this->phone,$mod_info['verify'],4);
+        Sms::checkVerify($mod_info['new_phone'],$mod_info['verify'],5);
+
+        $this->phone = $mod_info['new_phone'];
+        $bool = $this->save(false);
+        if(!$bool){
+            throw new \Exception('修改异常');
+        }
+    }
+
 
     public function behaviors()
     {
@@ -241,6 +305,9 @@ class User extends BaseModel
         $behaviors[]=[
             'class' => \yii\behaviors\AttributesBehavior::className(),
             'attributes' =>  [
+                'openid'  =>[
+                    \yii\db\ActiveRecord::EVENT_BEFORE_INSERT => [$this,'setWxInfo'],
+                ],
                 'password'  =>[
                     \yii\db\ActiveRecord::EVENT_BEFORE_INSERT => [$this,'getPassword'],
                     \yii\db\ActiveRecord::EVENT_BEFORE_UPDATE => [$this,'getPassword'],
@@ -352,11 +419,11 @@ class User extends BaseModel
                 ]);
                 break;
             default:
-                $rule = [
+                $rule = array_merge($rule,[
                     [['type','sex','username','phone','province','city','area','area_id','openid','face','email',
                     'password','salt','company_name','contacts','money','history_money','auth_key','access_token','status'],
                     'safe']
-                ];
+                ]);
                 break;
         }
         return $rule;

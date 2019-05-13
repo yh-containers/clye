@@ -70,11 +70,14 @@ class OrderController extends CommonController
                 'step_info_name' => $current_step_info['name'],
                 'goods_num' => 0,
                 'pay_money' => $vo['pay_money'],
+                'goods_money' => 0,
                 'handle' => $sure_handle,
+                'status' => $vo['status'],
                 'goods' => [],
             ];
             foreach ($vo['linkOrderGoods'] as $item) {
                 $info['goods_num'] += $item['num'];
+                $info['goods_money'] += $item['per_price']*$item['num'];
                 $info['goods'][] = [
                     'gid' => $item['gid'],
                     'money' => $item['per_price'],
@@ -83,6 +86,7 @@ class OrderController extends CommonController
                     'cover_img' => \common\models\Goods::getCoverImg($item['img']),
                 ];
             }
+            $info['goods_money'] = sprintf('%.2f',$info['goods_money']);
             $data[] = $info;
         }
         return $this->asJson(['code' => 1, 'msg' => '获取成功', 'data' => $data]);
@@ -94,6 +98,8 @@ class OrderController extends CommonController
         $channel = $this->request->isGet ? $this->request->get('channel') : $this->request->post('channel');
         $gid = $this->request->isGet ? $this->request->get('gid') : $this->request->post('gid');
         $num = $this->request->isGet ? $this->request->get('num', 1) : $this->request->post('num', 1);
+        //渠道数据
+        $channel_g_data = $this->request->isGet ? $this->request->get('channel_g_data') : $this->request->post('channel_g_data');
 
         //地址
         $addr_where['uid'] = $this->user_id;
@@ -102,7 +108,10 @@ class OrderController extends CommonController
 
         $model = new \common\models\Order();
         //详情渠道
-        $channel && $model->check_channel = $channel;
+        if($channel){
+            $model->check_channel = $channel;
+            $model->channel_g_data = $channel_g_data;
+        }
         //检出订单信息
         list($goods_info, $money) = $model->checkOrderInfo($this->user_model, $gid, $num);
         /**/
@@ -121,6 +130,7 @@ class OrderController extends CommonController
             'goods_info' => $goods_info,
             'money' => $money,
             'pay_way' => $pay_way,
+            'channel_g_data' => $channel_g_data,
             'user_model' => $this->user_model,
         ]);
     }
@@ -194,5 +204,20 @@ class OrderController extends CommonController
         }
         return $this->asJson(['code'=>1,'msg'=>'操作成功']);
     }
+
+
+
+    //取消订单
+    public function actionCancelOrder()
+    {
+        $id = $this->request->get('id');
+        try{
+            \common\models\Order::cancelOrder($id,$this->user_id);
+        }catch (\Exception $e){
+            throw new \yii\base\UserException($e->getMessage());
+        }
+        $this->asJson(['code'=>1,'msg'=>'操作成功']);
+    }
+
 
 }

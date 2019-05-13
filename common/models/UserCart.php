@@ -24,7 +24,7 @@ class UserCart extends BaseModel
      * */
     public static function getNum($user_id)
     {
-        $num = self::find()->where(['uid'=>$user_id])->sum('num');
+        $num = self::find()->joinWith('linkGoods',false,'RIGHT JOIN')->where(['uid'=>$user_id])->sum('num');
         return $num?$num:0;
     }
 }

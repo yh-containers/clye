@@ -43,7 +43,10 @@ $this->params = array_merge($this->params,[
         var detail_url = '<?=\yii\helpers\Url::to(['detail'])?>';
         var opt_url = '<?=\yii\helpers\Url::to(['mine/add-cart'])?>';
         var del_order_url = '<?=\yii\helpers\Url::to(['order/del'])?>';
+        var cancel_order_url = '<?=\yii\helpers\Url::to(['order/cancel-order'])?>';
         var logistics_url = '<?=\yii\helpers\Url::to(['order/logistics'])?>';
+        var once_again = '<?=\yii\helpers\Url::to(['order/info'])?>';
+        var receive_url = '<?=yii\helpers\Url::to(['order/receive'])?>';
         $(function(){
             layui.use('flow', function(){
                 var $ = layui.jquery; //不用额外加载jQuery，flow模块本身是有依赖jQuery的，直接用即可。
@@ -59,6 +62,7 @@ $this->params = array_merge($this->params,[
                             //假设你的列表返回在data集合中
                             layui.each(res.data, function(index, item){
                                 var data = [],handle=[];
+                                var once_g_info='';
                                 if(item.hasOwnProperty('goods'))  data=item.goods?item.goods:[];
                                 if(item.hasOwnProperty('handle'))  handle=item.handle?item.handle:[];
                                 var html='<div class="order_list">\n' +
@@ -71,6 +75,8 @@ $this->params = array_merge($this->params,[
                                     '                    </div>\n' +
                                     '                    <div class="module item">\n';
                                     data.map(function(goods_item,index){
+                                        //商品数据
+                                        once_g_info+=goods_item.gid+'-'+goods_item.num+',';
                                         html +='              <div class="item-list">\n' +
                                             '                            <div class="item-img"><img src="'+goods_item.cover_img+'" alt=""></div>\n' +
                                             '                            <div class="item-info">\n' +
@@ -86,7 +92,7 @@ $this->params = array_merge($this->params,[
 
                                     html +='                    </div>\n' +
                                     '                    <div class="module total-pay">\n' +
-                                    '                        <div class="total-price"><span>共<em>'+item.goods_num+'</em>件商品</span> <span>合计:<em class="price">¥'+item.pay_money+'</em></span></div>\n' +
+                                    '                        <div class="total-price"><span>共<em>'+item.goods_num+'</em>件商品</span> <span>合计:<em class="price">¥'+item.goods_money+'</em></span></div>\n' +
                                     '                    </div>\n' +
                                     '                </a>\n' +
                                     '                <div class="module orderop clearfix">\n' +
@@ -96,6 +102,13 @@ $this->params = array_merge($this->params,[
                                         html+='<a href="'+logistics_url+(logistics_url.indexOf('?')===-1?'?':'&')+'id='+item.id+'" class="oh_btn">查看物流</a>\n';
                                     }
 
+                                    //取消订单
+                                    if(handle.indexOf('cancel_order')!==-1){
+                                        html+='<a href="javascript:;"' +
+                                            'onclick="$.common.reqInfo(this,{confirm_title:\'是否取消订单\'})"'  +
+                                            'data-conf="{url:'+"'"+cancel_order_url+"'"+',data:{id:'+"'"+item.id+"'"+'},success:del_order}"' +
+                                            ' class="oh_btn">取消订单</a>\n';
+                                    }
                                     //删除订单
                                     if(handle.indexOf('delete')!==-1){
                                         html+='<a href="javascript:;"' +
@@ -105,11 +118,19 @@ $this->params = array_merge($this->params,[
                                     }
                                     //确认收货
                                     if(handle.indexOf('receive')!==-1){
-                                        html+='<a href="'+detail_url+(detail_url.indexOf('?')===-1?'?':'&')+'id='+item.id+'" class="oh_btn">确认收货</a>\n';
+                                        html+='<a href="javascript:;" ' +
+                                            'class="oh_btn"' +
+                                            'onclick="$.common.reqInfo(this,{confirm_title:\'确定收货?\'})"'+
+                                            'data-conf="{url:'+"'"+receive_url+"'"+',data:{id:'+"'"+item.id+"'"+'},success:receive_success}" class="mod_btn bg_orange"'+
+                                            '>确认收货</a>\n';
                                     }
-                                    html+='<a href="'+detail_url+(detail_url.indexOf('?')===-1?'?':'&')+'id='+item.id+'" class="oh_btn">查看订单</a>\n'+
-                                    '                        <a href="javascript:alert(\'开发中.....\');" class="oh_btn line_btn">再次购买</a>\n' +
-                                    '                    </div>\n' +
+                                    html+='<a href="'+detail_url+(detail_url.indexOf('?')===-1?'?':'&')+'id='+item.id+'" class="oh_btn">查看订单</a>\n';
+
+                                    //再次购买
+                                    if(item.hasOwnProperty('status') && item.status>=2){
+                                        html+='<a href="'+once_again+(once_again.indexOf('?')===-1?'?':'&')+'channel=once_again&channel_g_data='+once_g_info+'" class="oh_btn line_btn">再次购买</a>\n';
+                                    }
+                                    html+= '          </div>\n' +
                                     '                </div>\n' +
                                     '            </div>'
                                 lis.push(html);
@@ -135,6 +156,14 @@ $this->params = array_merge($this->params,[
         layui.layer.msg(res.msg)
         if(res.code==1){
             setTimeout(function(){location.reload()},1000)
+        }
+    }
+
+    //删除订单刷新页面
+    function receive_success(res){
+        layui.layer.msg(res.msg)
+        if(res.code==1){
+           location.reload()
         }
     }
 </script>

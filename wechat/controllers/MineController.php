@@ -99,6 +99,7 @@ class MineController extends CommonController
         $pagination = \Yii::createObject(array_merge(\Yii::$app->components['pagination'],['totalCount' => $count]));
         $list = $query->offset($pagination->offset)
             ->limit($pagination->limit)
+            ->orderBy('is_default desc,id desc')
             ->all();
 
         $data = [];
@@ -175,6 +176,8 @@ class MineController extends CommonController
             'area' => $area,
         ]);
     }
+
+
     //修改用户头像
     public function actionModFace()
     {
@@ -229,9 +232,17 @@ class MineController extends CommonController
             'user_type' => $this->user_model->linkType,
         ]);
     }
+
     //用户信息
     public function actionUpPage()
     {
+        //新建用户申请信息
+        $model = new \common\models\UserReqUp();
+        $model->uid = $this->user_model->id;
+        $model->type = $this->user_model->type;
+        $model->status = 0;
+        $model->save(false);
+
         return $this->render('upPage',[
         ]);
     }
@@ -341,8 +352,23 @@ class MineController extends CommonController
 
         return $this->asJson(['code'=>1,'msg'=>'获取成功','data'=>$data,'page'=>$pagination->pageCount]);
     }
+
+
     public function actionContractDetail()
     {
+        if($this->request->isAjax){
+            $id = $this->request->post('id');
+            $file = $this->request->post('file');
+            $model = \common\models\UserContract::findOne($id);
+            if(empty($model)) throw new \yii\base\UserException('合同信息异常');
+            if($model['uid']!=$this->user_id) throw new \yii\base\UserException('合同信息异常2');
+
+            $model->file=$file;
+            $model->save(false);
+            return $this->asJson(['code'=>1,'msg'=>'保存成功']);
+        }
+
+
         $id = $this->request->get('id');
         $model = \common\models\UserContract::findOne($id);
 
@@ -350,6 +376,8 @@ class MineController extends CommonController
             'model' => $model,
         ]);
     }
+
+
     //合同具体内容
     public function actionContractContent()
     {
@@ -363,6 +391,56 @@ class MineController extends CommonController
         }
         return $this->render('contractContent',[
             'content' => $content,
+        ]);
+    }
+
+
+    public function actionSetting()
+    {
+
+        return $this->render('setting',[
+            'user_model' => $this->user_model,
+        ]);
+    }
+
+    public function actionAccount()
+    {
+
+        return $this->render('account',[
+            'user_model' => $this->user_model,
+        ]);
+    }
+
+    public function actionModPwd()
+    {
+        if($this->request->isAjax){
+            $php_input = $this->request->post();
+            try{
+                $this->user_model->modPwd($php_input);
+            }catch (\Exception $e){
+                throw new \yii\base\UserException($e->getMessage());
+            }
+            return $this->asJson(['code'=>1,'msg'=>'操作成功']);
+        }
+
+        return $this->render('modPwd',[
+            'user_model' => $this->user_model,
+        ]);
+    }
+
+    public function actionModPhone()
+    {
+        if($this->request->isAjax){
+            $php_input = $this->request->post();
+            try{
+                $this->user_model->modPhone($php_input);
+            }catch (\Exception $e){
+                throw new \yii\base\UserException($e->getMessage());
+            }
+            return $this->asJson(['code'=>1,'msg'=>'操作成功']);
+        }
+        return $this->render('modPhone',[
+            'user_model' => $this->user_model,
         ]);
     }
 

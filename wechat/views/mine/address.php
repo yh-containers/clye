@@ -72,7 +72,7 @@ $this->params = array_merge($this->params,[
 
                 var addr_id = $(this).data('id');
                 var up_href = document.referrer
-                window.location.href= up_href+(up_href.indexOf('?')===-1?'?':'&')+'channel='+channel+'&addr_id='+addr_id
+                window.location.href= up_href+(up_href.indexOf('?')===-1?'?':'&')+'addr_id='+addr_id+(up_href.indexOf('channel')===-1?('&channel'+channel):'')
             }
         })
 

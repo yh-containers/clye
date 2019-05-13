@@ -11,11 +11,26 @@ class UserController extends CommonController
 
     public function actionIndex()
     {
+        $keyword = trim($this->request->get('keyword'));
+
         $query = \common\models\User::find();
+        !empty($keyword) && $query= $query->andWhere(['or',['like','username',$keyword],['like','phone',$keyword]]);
+
+
+        //获取管理员角色问题
+        //获取所有超级管理员组
+        $roles = \common\models\SysRole::find()->asArray()->where(['or',['pid'=>1],['id'=>1]])->all();
+        $roles_groups = array_column($roles,'id');
+        if(!in_array($this->user_model->rid,$roles_groups)){
+            $query = $query->andWhere(['area_id'=>$this->user_model->area_id]);
+        }
+
+
         $count = $query->count();
         $pagination = \Yii::createObject(array_merge(\Yii::$app->components['pagination'],['totalCount'=>$count]));
         $list = $query->with(['linkProvince','linkCity','linkArea','linkAreaInfo','linkType'])->offset($pagination->offset)->limit($pagination->limit)->orderBy('id desc')->all();
         return $this->render('index',[
+            'keyword'  =>  $keyword,
             'list'  =>  $list,
             'pagination' => $pagination
         ]);
@@ -91,4 +106,46 @@ class UserController extends CommonController
         ]);
     }
 
+    //用户申请
+    public function actionReqUp()
+    {
+        $query = \common\models\UserReqUp::find()->joinWith('linkUser.linkType');
+        $count = $query->count();
+        $pagination = \Yii::createObject(array_merge(\Yii::$app->components['pagination'],['totalCount'=>$count]));
+        $list = $query->offset($pagination->offset)->limit($pagination->limit)->orderBy('id desc')->all();
+        return $this->render('reqUp',[
+            'list'  =>  $list,
+            'pagination' => $pagination
+        ]);
+    }
+
+    //删除用户
+    public function actionTypeDel()
+    {
+        $id = $this->request->get('id');
+        if($id==1) throw new \yii\base\UserException('系统指定类型无法删除');
+
+        $model = new \common\models\UserType();
+        $result = $model->actionDel(['id'=>$id]);
+        return $this->asJson($result);
+    }
+
+    //用户申请处理
+    public function actionHandleReq()
+    {
+        $id = $this->request->post('id');
+        $status = $this->request->post('status',1);
+        $model = \common\models\UserReqUp::findOne($id);
+        if(empty($model)) throw new \yii\base\UserException('操作数据异常');
+        if($model['status'])  throw new \yii\base\UserException('操作对象已处理，无法再次操作');
+        $model->status=$status;
+        $model->handle_time=time();
+        $model->save(false);
+        return  $this->asJson(['code'=>1,'msg'=>'操作成功']);
+    }
+
+    public function actionExcel()
+    {
+
+    }
 }

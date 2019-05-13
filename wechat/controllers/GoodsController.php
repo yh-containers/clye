@@ -19,7 +19,9 @@ class GoodsController extends CommonController
     {
         $keyword = $this->request->get('keyword');
         $cid = $this->request->get('cid');
+        $hot_kw = \common\models\HotKw::find()->where(['status'=>1])->orderBy('sort asc')->limit(5)->all();
         return $this->render('search',[
+            'hot_kw' =>$hot_kw,
             'keyword' =>$keyword,
             'cid' =>$cid,
         ]);

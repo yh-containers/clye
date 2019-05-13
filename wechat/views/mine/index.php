@@ -8,6 +8,10 @@ $this->params = array_merge($this->params,[
 <?php $this->beginBlock('content')?>
 <div class="user-info">
     <div class="user-bg">
+        <div class="icon-links">
+            <a class="item" href="<?=\yii\helpers\Url::to(['setting'])?>"><span>设置</span></a>
+        </div>
+
         <div class="list-item-middle">
             <div class="media-list-item-inner">
                 <a href="<?=\yii\helpers\Url::to(['info'])?>" class="clearfix">
@@ -102,6 +106,7 @@ $this->params = array_merge($this->params,[
                 <div class="icon icon-8"></div>
                 <div class="gird-lable">常见问题</div>
             </a>
+
 
         </div>
     </section>

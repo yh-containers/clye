@@ -5,6 +5,7 @@ use yii\base\BaseObject;
 
 class Wechat extends BaseObject
 {
+    const WX_AUTH_USER_INFO = 'WX_AUTH_USER_INFO';
     //开发者id
     public $appid;
     //开发者密码

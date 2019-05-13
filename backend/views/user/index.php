@@ -10,6 +10,19 @@ $this->params = [
 
     <div class="box">
         <div class="box-header with-border">
+            <div class="row">
+                <div class="col-sm-8"></div>
+                <div class="col-sm-4">
+                    <form>
+                        <div class="input-group col-sm-6">
+                            <input type="text" name="keyword" value="<?=$keyword?>" placeholder="用户名/手机号" class="form-control">
+                            <span class="input-group-btn">
+                          <button type="submit" class="btn btn-info btn-flat">搜索</button>
+                        </span>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
         <!-- /.box-header -->
         <div class="box-body">

@@ -39,13 +39,31 @@ class GoodsController extends CommonController
     //列表
     public function actionIndex()
     {
+        $keyword = trim($this->request->get('keyword'));
+        $cid = trim($this->request->get('cid'));
+
         $query = \common\models\Goods::find();
+
+        //关键字搜索
+        !empty($keyword)  && $query = $query->andWhere(['like','name',$keyword]);
+        //分类搜索
+        if($cid){
+            $cate_info = \common\models\GoodsCate::find()->asArray()->where(['pid'=>$cid])->all();
+            $cate_cid = $cate_info?array_column($cate_info,'id'):[];
+            array_push($cate_cid,$cid);
+            $query = $query->andWhere(['cid'=>$cate_cid]);
+
+        }
         $count = $query->count();
         $pagination = \Yii::createObject(array_merge(\Yii::$app->components['pagination'],['totalCount'=>$count]));
         $list = $query->with('linkCate')->offset($pagination->offset)->limit($pagination->limit)->orderBy('is_hot desc,sort desc')->all();
+        $top_cate = \common\models\GoodsCate::find()->asArray()->where(['pid'=>0])->all();
         return $this->render('index',[
+            'keyword'  =>  $keyword,
+            'cid'  =>  $cid,
             'list'  =>  $list,
-            'pagination' => $pagination
+            'pagination' => $pagination,
+            'top_cate' => $top_cate,
         ]);
     }
 

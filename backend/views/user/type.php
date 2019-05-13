@@ -33,6 +33,9 @@ $this->params = [
 
                         <td>
                             <a href="<?=\yii\helpers\Url::to(['type-add','id'=>$vo['id']])?>">编辑</a>
+                            <?php if($vo['id']!=1){?>
+                                <a href="javascript:;" onclick="$.common.del('<?=\yii\helpers\Url::to(['type-del','id'=>$vo['id']])?>')">删除</a>
+                            <?php }?>
                         </td>
                     </tr>
                 <?php }?>

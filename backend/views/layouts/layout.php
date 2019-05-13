@@ -90,8 +90,9 @@
         <!-- Default box -->
         <section class="content">
             <?php if (isset($this->blocks['content'])): ?>
+            <div class="row">
                 <?= $this->blocks['content'] ?>
-
+            </div>
             <?php endif; ?>
             <!-- /.box -->
 

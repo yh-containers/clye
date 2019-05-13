@@ -22,6 +22,45 @@ class UserAddr extends BaseModel
             'addr_extra'    =>  '详细地址',
         ];
     }
+    //默认地址问题
+    public function setDefault($event,$attribute)
+    {
+        if($this->$attribute==1){
+            //调整其它关闭默认
+            self::updateAll(['is_default'=>0],[
+                'and',
+                [
+                    'uid' => $this->uid,
+                    'is_default' => 1
+                ],
+                ['!=','id',$this->id],
+            ]);
+        }
+        return $this->$attribute;
+    }
+
+    public function behaviors()
+    {
+        $behaviors = parent::behaviors();
+        $behaviors[]=[
+            'class' => \yii\behaviors\AttributesBehavior::className(),
+            'attributes' =>  [
+                'is_default'  =>[
+                    \yii\db\ActiveRecord::EVENT_AFTER_INSERT => [$this,'setDefault'],
+                    \yii\db\ActiveRecord::EVENT_AFTER_UPDATE => [$this,'setDefault'],
+                ],
+            ]
+        ];
+        //开启软删除
+        $behaviors['softDeleteBehavior'] = [
+            'class' => \yii2tech\ar\softdelete\SoftDeleteBehavior::className(),
+            'softDeleteAttributeValues' => [
+                self::getSoftDeleteField() => time(),
+            ],
+            'replaceRegularDelete' => true // mutate native `delete()` method
+        ];
+        return $behaviors;
+    }
 
     public function scenarios()
     {

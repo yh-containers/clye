@@ -217,4 +217,42 @@ class SystemController extends CommonController
         return $this->asJson($result);
     }
 
+    //热门词
+    public function actionHotKw()
+    {
+        $query = \common\models\HotKw::find();
+        $count = $query->count();
+        $pagination = \Yii::createObject(array_merge(\Yii::$app->components['pagination'],['totalCount'=>$count]));
+        $list = $query->offset($pagination->offset)->limit($pagination->limit)->orderBy('sort asc')->all();
+        return $this->render('hotKw',[
+            'list'  => $list,
+            'pagination' => $pagination
+        ]);
+    }
+
+    //设置
+    public function actionHotKwAdd()
+    {
+        $id = $this->request->get('id',0);
+        $model = new \common\models\HotKw();
+        if($this->request->isAjax){
+            $php_input = $this->request->post();
+            $result = $model->actionSave($php_input);
+            return $this->asJson($result);
+        }
+
+        $model = $model::findOne($id);
+        return $this->render('hotKwAdd',[
+            'model' => $model,
+        ]);
+    }
+
+    //删除
+    public function actionHotKwDel()
+    {
+        $id = $this->request->get('id');
+        $model = new \common\models\HotKw();
+        $result = $model->actionDel(['id'=>$id]);
+        return $this->asJson($result);
+    }
 }

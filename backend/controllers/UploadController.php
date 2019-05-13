@@ -22,14 +22,14 @@ class UploadController extends CommonController
         return $behaviors;
     }
 
-    public function actionUpload($type='images',$is_return=false)
+    public function actionUpload($type='images',$is_return=false,$user_id=null)
     {
 //        $request = \Yii::$app->request;
 //        $up_type = $request->post('type','images');
         $upload = new UploadedFile();
         $file = $upload->getInstanceByName(key($_FILES));
         //相对路径
-        $relative_path =  $this->root_dir.'/uploads/'.$type.'/'.date('Y-m-d').'/';
+        $relative_path =  $this->root_dir.'/uploads/'.$type.(is_null($user_id)?'':'/'.$user_id).'/'.date('Y-m-d').'/';
         //保存目录
         $path = $relative_path;
         if (!file_exists($path)) {

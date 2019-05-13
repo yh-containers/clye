@@ -10,7 +10,7 @@ $this->params = array_merge($this->params,[
 <div class="header">
     <a class="back" href="javascript:history.go(-1)"></a>
     <h4><?=$this->title?></h4>
-    <?php if(empty($model)) {?>
+    <?php if(!empty($model)) {?>
     <div class="right delete" id="addDelete" data-id="<?=$model['id']?>">删除</div>
     <?php }?>
 </div>
@@ -65,7 +65,7 @@ $this->params = array_merge($this->params,[
                 layer.close(index)
                 layer.msg(result.msg)
                 if(result.code==1){
-                    setTimeout(function(){window.history.back()},1000)
+                    setTimeout(function(){window.history.go(-1)},1000)
                 }
             })
         })
@@ -78,7 +78,7 @@ $this->params = array_merge($this->params,[
                     layer.close(index);
                     layer.msg(result.msg)
                     if(result.code==1){
-                        setTimeout(function(){window.history.back()},1000)
+                        setTimeout(function(){window.history.go(-1)},1000)
                     }
                 })
             })
