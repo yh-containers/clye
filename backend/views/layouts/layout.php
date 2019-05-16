@@ -50,15 +50,25 @@
             </a>
 
             <div class="navbar-custom-menu">
-                <ul class="nav navbar-nav">
+                <ul class="nav navbar-nav">                   
                     <li class="dropdown user user-menu">
-                        <a href="javascript:;">
-                            <span class="hidden-xs"><?=\Yii::$app->controller->user_model['name']?></span>
+                        <a href="<?=\yii\helpers\Url::to(['orders/index'])?>" style="padding:10px 15px">
+                            新订单提醒:<?=\backend\widgets\OrderNoHandler::widget()?>
+                        </a>
+                    </li>
+                    <li class="dropdown user user-menu">
+                        <a href="javascript:;" style="padding:10px 15px">
+                            <span class="Circular-text" style="display: inline-block;vertical-align: middle;overflow: hidden;border-radius:50px;">
+                                <img width="30px" height="30px" src="/assets/images/default.jpg">
+                            </span>
+                            <span class="hidden-xs">【<?=\Yii::$app->controller->is_super_manager?'平台管理员':\Yii::$app->controller->user_model['linkProvince']['name']?>】|</span>
+                            <span><?=\Yii::$app->controller->user_model['name']?></span>
                         </a>
                     </li>
                     <li class="dropdown user user-menu">
 
                         <a href="<?=\yii\helpers\Url::to(['index/logout'])?>">
+                            <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
                             <span class="hidden-xs">退出登录</span>
                         </a>
                     </li>
@@ -90,7 +100,7 @@
         <!-- Default box -->
         <section class="content">
             <?php if (isset($this->blocks['content'])): ?>
-            <div class="row">
+            <div class="rows clearfix">
                 <?= $this->blocks['content'] ?>
             </div>
             <?php endif; ?>

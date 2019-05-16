@@ -17,12 +17,10 @@ class UserController extends CommonController
         !empty($keyword) && $query= $query->andWhere(['or',['like','username',$keyword],['like','phone',$keyword]]);
 
 
-        //获取管理员角色问题
         //获取所有超级管理员组
-        $roles = \common\models\SysRole::find()->asArray()->where(['or',['pid'=>1],['id'=>1]])->all();
-        $roles_groups = array_column($roles,'id');
-        if(!in_array($this->user_model->rid,$roles_groups)){
-            $query = $query->andWhere(['area_id'=>$this->user_model->area_id]);
+        if(!$this->is_super_manager){
+            $province = empty($this->user_model['province'])?-1:$this->user_model['province'];
+            $query = $query->andWhere(['province'=>$province]);
         }
 
 

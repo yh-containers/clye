@@ -51,19 +51,18 @@ $this->params = array_merge($this->params,[
                     <div class="shopPrice" style="display:none;"><span class="shop-total-amount ShopTotal">0.00</span></div>
                 </div>
             </div>
+
+            <div class="payment-bar" style="display:block;">
+                <div class="all-checkbox"><label for="AllCheck"><input type="checkbox" class="check goods-check" id="AllCheck">全选</label></div>
+                <div class="shop-total">
+                    <strong>总价：<span class="price">¥<i class="price" id="AllTotal">0.00</i></span></strong>
+                </div>
+                <a class="settlement del-cart" id="delete" style="display: none;">删除</a>
+                <a class="add_favorites" id="collect" style="display: none;">移入收藏</a>
+                <a href="javascript:;" data-href="<?=\yii\helpers\Url::to(['order/info','channel'=>'cart'])?>" id="settlement" class="settlement">去结算</a>
+            </div>
         <?php }?>
 
-
-
-        <div class="payment-bar" style="display:block;">
-            <div class="all-checkbox"><label for="AllCheck"><input type="checkbox" class="check goods-check" id="AllCheck">全选</label></div>
-            <div class="shop-total">
-                <strong>总价：<span class="price">¥<i class="price" id="AllTotal">0.00</i></span></strong>
-            </div>
-            <a class="settlement del-cart" id="delete" style="display: none;">删除</a>
-            <a class="add_favorites" id="collect" style="display: none;">移入收藏</a>
-            <a href="javascript:;" data-href="<?=\yii\helpers\Url::to(['order/info','channel'=>'cart'])?>" id="settlement" class="settlement">去结算</a>
-        </div>
     </div>
 </div>
 
@@ -119,9 +118,10 @@ $this->params = array_merge($this->params,[
             var gid = $(this).data('gid')
             var num =parseInt(t.text());
             if(num>1){
+                t.text(num-1);
                 $.common.reqInfo({url:goods_cart_url,data:{gid:gid,num:-1},success:function(){
-                        t.text(num-1);
-                    }})
+
+                }})
                 if (t.text() <= 1) {
                     t.text(1);
                 }
@@ -135,8 +135,9 @@ $this->params = array_merge($this->params,[
             var gid = $(this).data('gid')
             console.log(2);
             var num =parseInt(t.text()) + 1;
+            t.text(num);
             $.common.reqInfo({url:goods_cart_url,data:{gid:gid},success:function(){
-                    t.text(num);
+
             }})
             if (t.text() <= 1) {
                 t.text(1);
@@ -278,7 +279,7 @@ $this->params = array_merge($this->params,[
                 var oneprice = parseFloat($(this).find(".ShopTotal").text());
                 allprice += oneprice;
             });
-            $("#AllTotal").text(allprice.toFixed(2));
+            $("#AllTotal").text(Number(allprice)?allprice.toFixed(2):0.00);
         }
     });
 

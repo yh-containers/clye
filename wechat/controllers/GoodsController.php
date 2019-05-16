@@ -13,6 +13,14 @@ class GoodsController extends CommonController
             'cid' =>$cid,
         ]);
     }
+    public function actionSpecial()
+    {
+        $cid = $this->request->get('cid');
+
+        return $this->render('special',[
+            'cid' =>$cid,
+        ]);
+    }
 
     //检索
     public function actionSearch()
@@ -38,7 +46,7 @@ class GoodsController extends CommonController
     public function actionDetail()
     {
         $id= $this->request->get('id');
-        $model = \common\models\Goods::findOne($id);
+        $model = \common\models\Goods::find()->with(['linkSpu'])->where(['id'=>$id])->one();
         //当前用户模型
         $model_user = \common\models\User::findOne($this->user_id);
         //验证用户是否收藏
@@ -54,6 +62,7 @@ class GoodsController extends CommonController
 
     public function actionShowList()
     {
+        $is_special = $this->request->get('is_special');
         $keyword = $this->request->get('keyword');
         $keyword = trim($keyword);
         $cid = (int)$this->request->get('cid'); //分类id
@@ -70,7 +79,8 @@ class GoodsController extends CommonController
         }
         $count = $query->count();
         $pagination = \Yii::createObject(array_merge(\Yii::$app->components['pagination'],['totalCount' => $count]));
-        $list = $query->offset($pagination->offset)
+        $list = $query
+            ->offset($pagination->offset)
             ->limit($pagination->limit)
             ->orderBy('is_hot desc,sort asc')
             ->all();
@@ -80,13 +90,19 @@ class GoodsController extends CommonController
         $model_user = \common\models\User::findOne($this->user_id);
 
         foreach($list as $vo){
-            $data[] = [
+            $info = [
                 'id'         =>  $vo['id'],
+                'p_no'       =>  empty($vo['p_no'])?'':$vo['p_no'],
                 'name'       =>  $vo['name'],
                 'price'      =>  $vo->getUserPrice($model_user),
                 'cover_img'  =>  \common\models\Goods::getCoverImg($vo['img']),
                 'intro'      =>  $vo['intro'],
             ];
+
+
+
+
+            $data[] = $info;
         }
 
         return $this->asJson(['code'=>1,'msg'=>'获取成功','data'=>$data,'page'=>$pagination->pageCount]);

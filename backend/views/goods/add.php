@@ -9,6 +9,8 @@
 <style>
     #goods-img .item{position: relative; display: inline-block}
     #goods-img .item i{right: 0px;position: absolute;z-index: 999;font-size: 24px;color: red;cursor: pointer}
+    #add-spu-block input{width: 160px;display: inline-block}
+    #add-spu-block .fa-close{color: red}
 </style>
 <?php $this->endBlock();?>
 
@@ -48,6 +50,13 @@
                 </div>
             </div>
             <div class="form-group">
+                <label for="inputPassword3" class="col-sm-2 control-label">批号</label>
+
+                <div class="col-sm-10">
+                    <input type="text" maxlength="255" class="form-control" name="p_no" value="<?=$model['p_no']?>" placeholder="">
+                </div>
+            </div>
+            <div class="form-group">
                 <label for="inputPassword3" class="col-sm-2 control-label">商品图片</label>
 
                 <div class="col-sm-10 margin-bottom">
@@ -64,17 +73,29 @@
                 </div>
             </div>
             <div class="form-group">
-                <label for="inputPassword3" class="col-sm-2 control-label">价格</label>
+                <label for="inputPassword3" class="col-sm-2 control-label">spu</label>
 
-                <div class="col-sm-10">
-                    <input type="number"  class="form-control" name="price" value="<?=$model['price']?$model['price']:0.00?>" placeholder="">
+                <div class="col-sm-10 margin-bottom">
+                    <button class="layui-btn" id="add-spu" type="button">增加一项</button>
+                </div>
+                <div class="col-sm-10 col-sm-offset-2" id="add-spu-block">
+                    <?php if(!empty($model)) foreach($model['linkSpu'] as $spu){?>
+                       <div class="item">
+                           <i class="fa fa-fw fa-close"></i>
+
+                           <input type="text" name="spu_name[]" value="<?=$spu['name']?>" class="form-control"/>:
+                           <input  type="text"  name="spu_val[]" value="<?=$spu['val']?>" class="form-control">
+                           <input  type="hidden"  name="spu_index[]" value="<?=$spu['id']?>" class="form-control">
+                       </div>
+                    <?php }?>
                 </div>
             </div>
+
             <div class="form-group">
-                <label for="inputPassword3" class="col-sm-2 control-label">运费</label>
+                <label for="inputPassword3" class="col-sm-2 control-label">价格<span style="color: red">(<?=\common\models\User::getUserTypePoint(null,'name',(int)\Yii::$app->controller->is_super_manager)?>)</span></label>
 
                 <div class="col-sm-10">
-                    <input type="number"  class="form-control" name="freight_money" value="<?=$model['freight_money']?$model['freight_money']:0.00?>" placeholder="">
+                    <input type="number"  class="form-control" name="price" value="<?=empty($model)? 0.00:$model->getUserPrice(\Yii::$app->controller->user_model,\Yii::$app->controller->is_super_manager)?>" placeholder="">
                 </div>
             </div>
             <div class="form-group">
@@ -84,13 +105,7 @@
                     <input type="number"  class="form-control" name="taxation_money" value="<?=$model['taxation_money']?$model['taxation_money']:0.00?>" placeholder="">
                 </div>
             </div>
-            <div class="form-group">
-                <label for="inputPassword3" class="col-sm-2 control-label">库存</label>
 
-                <div class="col-sm-10">
-                    <input type="number"  class="form-control" name="stock" value="<?=$model['stock']?$model['stock']:0?>" placeholder="">
-                </div>
-            </div>
             <div class="form-group">
                 <label for="inputPassword3" class="col-sm-2 control-label">排序</label>
 
@@ -175,6 +190,19 @@
             })
 
         });
+
+        $("#add-spu").click(function(){
+            var html = '<div class="item">\n' +
+                '                       <i class="fa fa-fw fa-close"></i>\n' +
+                '                       <input type="text" name="spu_name[]" class="form-control"/>:<input  type="text"  name="spu_val[]" class="form-control">\n' +
+                '                   </div>'
+            $("#add-spu-block").append(html);
+        })
+        $("#add-spu-block").on('click','.fa-close',function(){
+            $(this).parent().remove()
+        })
+
+
         $("#goods-img").on('click','.item i',function(){
             $(this).parent().remove()
         })

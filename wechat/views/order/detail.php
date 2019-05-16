@@ -83,7 +83,7 @@ $this->params = array_merge($this->params,[
             $goods_money  = 0.00;
             if(!empty($model['linkOrderGoods']))
                 foreach($model['linkOrderGoods'] as $vo){
-                    $goods_money=$vo['per_price']*$vo['num'];
+                    $goods_money+=$vo['per_price']*$vo['num'];
             ?>
             <div class="row clearfix">
                 <img src="<?=\common\models\Goods::getCoverImg($vo['img'])?>">
@@ -113,7 +113,6 @@ $this->params = array_merge($this->params,[
         <ul class="order_pay_info">
             <li><span>商品金额</span><em>¥<i><?=sprintf('%.2f',$goods_money)?></i></em></li>
             <li><span>税费</span><em>¥<i><?=$model['taxation_money']?></i></em></li>
-            <li><span>运费</span><em>¥<i><?=$model['freight_money']?></i></em></li>            
 
             <div class="total"><span>实付总额</span><em class="price">¥<i><?=$model['pay_money']?></i></em></div>
         </ul>

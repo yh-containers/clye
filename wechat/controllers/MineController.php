@@ -152,10 +152,12 @@ class MineController extends CommonController
     public function actionInfo()
     {
         if($this->request->isAjax){
-            $limit_field = ['username','sex','area_id','company_name','contacts','email','face'];
+            $limit_field = ['username'=>'用户名','sex'=>'性别','province'=>'省份','company_name'=>'公司名','contacts'=>'联系人','company_addr'=>'公司地址','email'=>'','face'=>''];
             $php_input = $this->request->post();
-            foreach($limit_field as $field){
-                if(!empty($php_input[$field])){
+            foreach($limit_field as $field=>$tip_msg){
+                if(empty($php_input[$field]) && !empty($tip_msg)){
+                    throw new \yii\base\UserException($tip_msg.'必须填写');
+                }elseif(isset($php_input[$field])){
                     $this->user_model[$field]= $php_input[$field];
                 }
             }
@@ -169,7 +171,7 @@ class MineController extends CommonController
 
         }
         //地区列表
-        $area = \common\models\SysLocationArea::getCacheData();
+        $area = \common\models\SysLocation::getCacheProvince();
 
         return $this->render('info',[
             'user_model' => $this->user_model,
@@ -239,7 +241,7 @@ class MineController extends CommonController
         //新建用户申请信息
         $model = new \common\models\UserReqUp();
         $model->uid = $this->user_model->id;
-        $model->type = $this->user_model->type;
+        $model->type = $this->user_model->cg_type;
         $model->status = 0;
         $model->save(false);
 
@@ -252,9 +254,10 @@ class MineController extends CommonController
     {
         $gid = $this->request->get('gid');
         $num = $this->request->get('num',1);
+        $mod = $this->request->get('mod',0);
         if(empty($gid)) throw new \yii\base\UserException('请求信息异常');
 
-        $bool = $this->user_model->addShoppingCart($gid,$num);
+        $bool = $this->user_model->addShoppingCart($gid,$num,$mod);
         //绑定购物车数量
         $cart_num = \common\models\UserCart::getNum($this->user_id);
         if($bool){

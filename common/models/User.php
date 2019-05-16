@@ -32,6 +32,41 @@ class User extends BaseModel
         ];
     }
 
+    public static function getUserTypePoint($type=null,$field=null,$type_val=null)
+    {
+        $data = [
+            ['type'=>1,'name'=>'A类用户'],
+            ['type'=>0,'name'=>'B类用户'],
+        ];
+        //强制返回用户类型
+        if(!is_null($type_val)){
+            foreach ($data as $vo){
+                if($vo['type']==$type_val){
+                    if(is_null($field)){
+                        return $vo;
+                    }else{
+                        return isset($vo[$field])?$vo[$field]:'';
+                    }
+                    break;
+                }
+            }
+            return false;
+        }
+
+        if(is_null($type)){
+            return $data;
+        }else{
+            $info = isset($data[$type])?$data[$type]:[];
+            if(is_null($field)){
+                return $info;
+            }else{
+                return isset($info[$field])?$info[$field]:'';
+            }
+        }
+
+    }
+
+
     public static function getSexInfo($type=null)
     {
         $data = ['未知','男','女','保密'];
@@ -66,15 +101,19 @@ class User extends BaseModel
      * 添加购物车
      * @param $gid int 商品id
      * @param $num int 数量
+     * @param $mod bool 调整数量
      * @return bool
      */
-    public function addShoppingCart($gid,$num=1)
+    public function addShoppingCart($gid,$num=1,$mod=false)
     {
         $bool = true;
         $model = UserCart::find()->where(['uid'=>$this->id,'gid'=>$gid])->one();
         if(!empty($model)){
             if($num<0 && $model->num<=1){
 
+            }elseif($mod){
+                $model->num=$num;
+                $bool = $model->save();
             }else{
                 $bool = $model->updateCounters(['num'=>$num]);
             }
@@ -379,6 +418,7 @@ class User extends BaseModel
         $rule = array_merge($rule,[
             ['face','default','value'=>'/assets/images/default.jpg'],
             ['type','default','value'=>1],
+            ['cg_type','default','value'=>0],
             ['sex','default','value'=>0],
         ]);
         switch ($this->scenario){
@@ -420,7 +460,7 @@ class User extends BaseModel
                 break;
             default:
                 $rule = array_merge($rule,[
-                    [['type','sex','username','phone','province','city','area','area_id','openid','face','email',
+                    [['type','sex','username','phone','province','city','area','area_id','openid','face','email','company_addr',
                     'password','salt','company_name','contacts','money','history_money','auth_key','access_token','status'],
                     'safe']
                 ]);

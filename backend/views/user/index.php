@@ -49,12 +49,11 @@ $this->params = [
                     <tr>
                         <td><?=$key+1?></td>
                         <td><?=$vo['username']?></td>
-                        <td><?=$vo['linkType']['name']?></td>
+                        <td><?=\common\models\User::getUserTypePoint(null,'name',$vo['cg_type'])?></td>
                         <td><?=$vo['phone']?></td>
                         <td><?=$vo['email']?></td>
                         <td><?=\common\models\User::getSexInfo($vo['sex']) ?></td>
                         <td>
-                            <p>行政区:<?=$vo['linkAreaInfo']['name']?> </p>
                             <p>地区:<?=$vo['linkProvince']['name'].' '.$vo['linkCity']['name']?> </p>
                         </td>
 

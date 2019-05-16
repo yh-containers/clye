@@ -47,8 +47,8 @@ $this->params = [
                     <th width="20">#</th>
                     <th width="200">商品名</th>
                     <th width="60">分类名</th>
-                    <th width="60">价格</th>
-                    <th width="60">库存</th>
+                    <th width="60">价格<span style="color: red">(<?=\common\models\User::getUserTypePoint(null,'name',(int)\Yii::$app->controller->is_super_manager)?>)</span></th>
+                    <th width="60">热门</th>
                     <th width="120">更新时间</th>
                     <th width="80">状态</th>
                     <th width="80">操作</th>
@@ -62,8 +62,8 @@ $this->params = [
                             <a href="<?=\yii\helpers\Url::to(['add','id'=>$vo['id']])?>"> <?=mb_strlen($vo['name'],'utf-8')>20?mb_substr($vo['name'],0,20,'utf-8').'...':$vo['name']?></a>
                         </td>
                         <td><?=$vo['linkCate']['name']?></td>
-                        <td><?=$vo['price']?> </td>
-                        <td><?=$vo['stock']?> </td>
+                        <td><?=$vo->getUserPrice(\Yii::$app->controller->user_model,\Yii::$app->controller->is_super_manager)?> </td>
+                        <td><?=$vo['is_hot']?'是':'否'?> </td>
                         <td><?=$vo['updateTime']?></td>
                         <td><?=\common\models\Goods::getStatusName($vo['status'])?></td>
                         <td>

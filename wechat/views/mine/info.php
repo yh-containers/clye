@@ -7,7 +7,7 @@ $this->params = array_merge($this->params,[
 
 <?php $this->beginBlock('content')?>
 <div class="header">
-    <a class="back" href="javascript:history.go(-1)"></a>
+    <a class="back history-back" href="javascript:;"></a>
     <h4><?=$this->title?></h4>
 </div>
 
@@ -43,12 +43,13 @@ $this->params = array_merge($this->params,[
                 <li>
                     <label>所属地区</label>
                     <div class="con">
-                        <select name="area_id">
-                            <option value="请选择">请选择</option>
+                        <select name="province">
+                            <option value="">请选择</option>
                             <?php foreach($area as $vo){?>
-                                <option value="<?=$vo['id']?>" <?=$user_model['area_id']==$vo['id']?'selected':''?>><?=$vo['name']?></option>
+                                <option value="<?=$vo['id']?>" <?=$user_model['province']==$vo['id']?'selected':''?>><?=$vo['name']?></option>
                             <?php }?>
                         </select>
+
                     </div>
                 </li>
                 <li>
@@ -61,6 +62,12 @@ $this->params = array_merge($this->params,[
                     <label>联系人</label>
                     <div class="name">
                         <input type="text" name="contacts" value="<?=$user_model['contacts']?>" placeholder="请输入联系人" autocomplete="off">
+                    </div>
+                </li>
+                <li>
+                    <label>公司地址</label>
+                    <div class="name">
+                        <input type="text" name="company_addr" value="<?=$user_model['company_addr']?>" placeholder="公司地址" autocomplete="off">
                     </div>
                 </li>
                 <li>
@@ -77,7 +84,7 @@ $this->params = array_merge($this->params,[
             </form>
         </div>
 
-        <a class="btn" href="javascript:;" id="submit">保存</a>
+        <a class="btn" href="javascript:;" id="submit" data-is_complete="<?=$user_model['province']?1:0?>">保存</a>
     </div>
 </div>
 
@@ -115,14 +122,25 @@ $(function(){
         });
     });
 
+    $(".history-back").click(function(){
+        var is_complete = $("#submit").data('is_complete')
+        if(is_complete){
+            window.location.href="<?=\yii\helpers\Url::to(['mine/index'])?>";
+        }else{
+            layer.msg('请完善个人资料');
+        }
+    })
 
     $("#submit").click(function(){
         var index = layer.load(3)
+        var $this = $(this)
         $.post($("#form").attr('action'),$("#form").serialize(),function(result){
             layer.close(index)
             layer.msg(result.msg)
             if(result.code==1){
-                window.history.back()
+                //操作已完成  可以返回个人中心
+                $this.data('is_complete',1);
+                //window.location.href="<?//=\yii\helpers\Url::to(['mine/index'])?>//";
             }
         })
     })

@@ -10,7 +10,10 @@
 
     <div class="box">
         <div class="box-header with-border">
-            <a href="<?=\yii\helpers\Url::to(['manage-add'])?>" class="btn bg-olive margin">新增</a>
+            <a href="<?=\yii\helpers\Url::to(['manage-add'])?>" class="btn bg-olive margin">
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                新增管理员
+            </a>
         </div>
         <!-- /.box-header -->
         <div class="box-body">
@@ -19,7 +22,8 @@
                 <tr>
                     <th>#</th>
                     <th>用户名</th>
-                    <th>行政区</th>
+                    <th>手机号码</th>
+                    <th>省份</th>
                     <th>角色</th>
                     <th>帐号</th>
                     <th>更新时间</th>
@@ -31,13 +35,14 @@
                     <tr>
                         <td><?=$key+1?></td>
                         <td><?=$vo['name']?></td>
-                        <td><?=$vo['linkAreaName']['name']?></td>
+                        <td><?=$vo['phone']?></td>
+                        <td><?=$vo['linkProvince']['name']?></td>
                         <td><?=$vo['userRoleName']?></td>
                         <td><?=$vo['account']?> </td>
                         <td><?=$vo['updateTime']?></td>
                         <td>
-                            <a href="<?=\yii\helpers\Url::to(['manage-add','id'=>$vo['id']])?>">编辑</a>
-                            <a  href="javascript:;" onclick="$.common.del('<?= \yii\helpers\Url::to(['manage-del','id'=>$vo['id']])?>','删除')" class="ml-5">  删除</a>
+                            <a class="layui-btn layui-btn-sm" href="<?=\yii\helpers\Url::to(['manage-add','id'=>$vo['id']])?>">编辑</a>
+                            <a class="layui-btn layui-btn-danger layui-btn-sm" href="javascript:;" onclick="$.common.del('<?= \yii\helpers\Url::to(['manage-del','id'=>$vo['id']])?>','删除')" class="ml-5">  删除</a>
                         </td>
                     </tr>
                 <?php }?>

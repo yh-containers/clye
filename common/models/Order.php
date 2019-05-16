@@ -74,11 +74,17 @@ class Order extends BaseModel
         //所有商品数据
         $goods_ids = array_keys($gid);
         //商品数据
-        $goods_info = Goods::find()->where(['id'=>$goods_ids])->all();
+        $goods_info = Goods::find()->with(['linkSpu'])->where(['id'=>$goods_ids])->all();
 
         foreach ($goods_info as $vo){
             if(isset($gid[$vo['id']])){
                 $goods_arr = $vo->getAttributes();
+                $goods_arr['linkSpu'] = [];
+                foreach ($vo['linkSpu'] as $spu){
+                    $goods_arr['linkSpu'][] = $spu->getAttributes();
+                }
+//                var_dump($goods_arr);exit;
+
                 $goods_arr['buy_num'] = $gid[$goods_arr['id']];
                 $goods_arr['per']  = Goods::getGoodsPer($user_model['type']);//商品折扣
                 $goods_arr['per_price']  = $vo->getUserPrice($user_model);
@@ -97,7 +103,7 @@ class Order extends BaseModel
 
             $goods_price = $vo['per_price']*$vo['buy_num']; // 购买金额
             $goods_per_price = $vo['per_price']*$vo['buy_num']; // 购买金额
-            $freight_money = $vo['freight_money']*$vo['buy_num']; // 运费金额
+            $freight_money = 0.00;//$vo['freight_money']*$vo['buy_num']; // 运费金额
             $taxation_money = $vo['taxation_money']*$vo['buy_num']; // 税费金额
 
             $money['money'] += $goods_price+$freight_money+$taxation_money;
@@ -112,6 +118,18 @@ class Order extends BaseModel
         }
 
         return [$goods_data,$money];
+    }
+    /**
+     * 订单未处理数量
+     * */
+    public static function noHandleNum($province,$m_uid,$is_spuer_manager=false)
+    {
+        $where['status']=0;
+        if(!$is_spuer_manager){
+            $where['province']= $province;
+        }
+        $count = self::find()->where($where)->count();
+        return  $count?$count:0;
     }
 
 
@@ -141,13 +159,15 @@ class Order extends BaseModel
         $model_order->no = self::getOrderNo();
         $model_order->uid = $model_user->id;
         $model_order->area_id = empty($model_user->area_id)?0:$model_user->area_id;
+        $model_order->province = $model_user->province;
+
         //指定选择区域的人
-        if(!empty($model_order->area_id)){
-            $manager = \common\models\SysManager::find()->asArray()->where(['area_id'=>$model_order->area_id])->orderBy('id asc')->all();
+        if(!empty($model_order->province)){
+            $manager = \common\models\SysManager::find()->asArray()->where(['province'=>$model_order->province])->orderBy('id asc')->all();
             if(!empty($manager)){
                 //循环指定同一区的其他人
                 $point_manager_id = $manager[0]['id']; //默认第一个人
-                $cache_name = 'up_point_manager'.$model_order->area_id;
+                $cache_name = 'up_point_manager'.$model_order->province;
                 $up_manager_id = \Yii::$app->cache->get($cache_name);
                 foreach ($manager as $key=>$vo) {
                     if($vo['id']==$up_manager_id && isset($manager[$key+1])){
@@ -196,7 +216,7 @@ class Order extends BaseModel
                 $model_order_goods->gid = $vo['id'];
                 $model_order_goods->price = $vo['price'];
                 $model_order_goods->per = $vo['per'];  //折扣
-                $model_order_goods->per_price = $vo['per_price'];//折后价
+                $model_order_goods->per_price = $vo['per_price']?$vo['per_price']:0.00;//
                 $model_order_goods->num = $vo['buy_num'];
                 $model_order_goods->freight_money = $vo['freight_money'];
                 $model_order_goods->taxation_money = $vo['taxation_money'];
@@ -255,19 +275,34 @@ class Order extends BaseModel
         if(empty($model)) throw new \Exception('操作对象异常');
 
         if($model['status']!=0) throw new \Exception('订单未处于待付款状态;无法进行此操作');
+        //查询购买商品
+        $transaction = \Yii::$app->db->beginTransaction();
+        try{
 
-        $model->status = 1;
-        $model->step_flow = 1;//开始制作流程
-        $model->pay_time=time();
+            $model_goods = $model->linkOrderGoods;
+            if($model_goods) {
+                $gid =[];
+                foreach($model_goods as $vo){
+                    array_push($gid,$vo['gid']);
+                }
+                Goods::updateAllCounters(['sold_num'=>1],['id'=>$gid]);
+            }
 
-        //付款直接开始生产
-        $model->is_produce=1;
-        $model->pro_start_time = time();
+            $model->status = 1;
+            $model->step_flow = 1;//开始制作流程
+            $model->pay_time=time();
 
-        $save_bool = $model->save(false);
-        if(!$save_bool){
+            //付款直接开始生产
+            $model->is_produce=1;
+            $model->pro_start_time = time();
+            $model->save(false);
+
+            $transaction->commit();
+        }catch (\Exception $e){
+            $transaction->rollBack();
             throw new \Exception('订单保存异常');
         }
+
     }
 
     //生产
@@ -377,6 +412,26 @@ class Order extends BaseModel
         if(empty($model)) throw new \Exception('操作对象异常');
         if($model['area_id']!=$area_id){
             $model->area_id = $area_id;
+            $save_bool = $model->save(false);
+            if(!$save_bool){
+                throw new \Exception('订单保存异常');
+            }
+        }
+    }
+    /**
+     * 修改订单所在省份
+     * @param $id int 订单id
+     * @param $area_id int 行政区id
+     * @throws
+     * */
+    public static function modProvince($id,$province_id)
+    {
+        if(empty($id)) throw new \Exception('订单数据异常');
+        //查询订单信息
+        $model = self::findOne($id);
+        if(empty($model)) throw new \Exception('操作对象异常');
+        if($model['province']!=$province_id){
+            $model->province = $province_id;
             $save_bool = $model->save(false);
             if(!$save_bool){
                 throw new \Exception('订单保存异常');
@@ -648,5 +703,10 @@ class Order extends BaseModel
     public function getLinkLocationArea()
     {
         return $this->hasOne(SysLocationArea::className(),['id'=>'area_id']);
+    }
+    //行政区
+    public function getLinkLocationProvince()
+    {
+        return $this->hasOne(SysLocation::className(),['id'=>'province']);
     }
 }

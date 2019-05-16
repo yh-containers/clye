@@ -11,7 +11,8 @@ class CartController extends CommonController
         $data = \common\models\UserCart::find()
             ->joinWith(['linkGoods'],true,'RIGHT JOIN')
             ->where([
-                \common\models\UserCart::tableName().'.uid'=>$this->user_id
+                \common\models\UserCart::tableName().'.uid'=>$this->user_id,
+                \common\models\Goods::tableName().'.status'=>1
             ])
             ->all();
         return $this->render('index',[

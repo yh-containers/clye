@@ -78,6 +78,8 @@ class IndexController extends CommonController
             $generate_pwd = \common\models\SysManager::generatePwd($password,$manage->salt);
             if($generate_pwd!=$manage->password) throw new \yii\base\UserException('用户名或密码不正确');
             if($manage->status!=1) throw new \yii\base\UserException('帐号已被禁用');
+            //判断是否是超级管理
+            //超级管理员用户列表
 
             //记录操作日志
             \common\models\SysOptLogs::recordData(0,'用户登录',[],$manage->id);
@@ -88,6 +90,7 @@ class IndexController extends CommonController
             $session->setTimeout(86400);
             $session['user_info'] =[
                 'user_id' => $manage->id,
+                'is_super_manager' => in_array($manage['rid'],\common\models\SysRole::getSupers()),
             ];
             return $this->asJson(['code'=>1,'msg'=>'登录成功','url'=>\yii\helpers\Url::to(['index/index'])]);
         }

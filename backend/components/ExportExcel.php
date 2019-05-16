@@ -21,7 +21,10 @@ class ExportExcel{
         foreach ($data as $key=>$vo){
             for($i=0;$i<count($vo);$i++){
                 $objPHPExcel->getActiveSheet()
-                    ->setCellValueByColumnAndRow($i,$key+1,$vo[$i]);
+                    ->setCellValueByColumnAndRow($i,$key+1,$vo[$i])
+                    ->setDataType()
+                ;
+
             }
         }
         //我们将要做的是

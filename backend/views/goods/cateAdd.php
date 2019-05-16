@@ -51,6 +51,19 @@
                     <input type="number" class="form-control" name="sort" value="<?= $model['sort']?$model['sort']:100 ?>" placeholder="">
                 </div>
             </div>
+            <div class="form-group">
+                <label for="inputPassword3" class="col-sm-2 control-label">特殊分类</label>
+                <div class="col-sm-10">
+                    <label>
+                        <input type="radio" name="is_special"  value="1" <?= $model['is_special']==1?'checked':'' ?>>
+                        是
+                    </label>
+                    <label>
+                        <input type="radio" name="is_special" value="0" <?= empty($model['is_special'])?'checked':'' ?>>
+                        否
+                    </label>
+                </div>
+            </div>
 
             <div class="form-group">
                 <label for="inputPassword3" class="col-sm-2 control-label">状态</label>

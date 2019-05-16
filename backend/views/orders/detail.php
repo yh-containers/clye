@@ -52,13 +52,13 @@
                              <tr>
                                  <td>订单金额</td>
                                  <td><?=$model['money']?></td>
-                                 <td>运费</td>
-                                 <td><?=$model['freight_money']?></td>
+
                                  <td>税费</td>
                                  <td><?=$model['taxation_money']?></td>
                                  <td>支付</td>
-                                 <td><?=$model['pay_money']?></td>                                 
-                                 
+                                 <td><?=$model['pay_money']?></td>
+                                 <td></td>
+                                 <td></td>
                              </tr>
 
                              <tr>
@@ -76,12 +76,12 @@
                                  <td><?=$model['receive_end_time']?date('Y-m-d H:i:s',$model['receive_end_time']):''?></td>
                                  <td>完成时间</td>
                                  <td><?=$model['complete_time']?></td>
-                                 <td>订单行政区</td>
-                                <td>
-                                     <select id="area-id"  data-id="<?=$model['id']?>" class="form-control">
+                                 <td>订单所在省份</td>
+                                 <td>
+                                     <select id="province-id"  data-id="<?=$model['id']?>" class="form-control">
                                          <option value="">选择行政区</option>
-                                         <?php foreach($area as $vo) {?>
-                                             <option value="<?=$vo['id']?>" <?=$vo['id']==$model['area_id']?'selected':''?>><?=$vo['name']?></option>
+                                         <?php foreach($province as $vo) {?>
+                                             <option value="<?=$vo['id']?>" <?=$vo['id']==$model['province']?'selected':''?>><?=$vo['name']?></option>
                                          <?php }?>
                                      </select>
                                  </td>
@@ -189,8 +189,8 @@
                              <th>商品名称</th>
                              <th>商品购买价格</th>
                              <th>税费</th>
-                             <th>运费</th>
                              <th>数量</th>
+                             <th>spu</th>
                          </tr>
                          </thead>
 
@@ -199,9 +199,17 @@
                              <tr>
                                  <td><?=$vo['name']?></td>
                                  <td><?=$vo['per_price']?></td>
-                                 <td><?=$vo['freight_money']?></td>
                                  <td><?=$vo['taxation_money']?></td>
                                  <td><?=$vo['num']?></td>
+                                 <td>
+                                     <?php
+                                        $original_goods_info = json_decode($vo['extra'],true);
+                                        if(!empty($original_goods_info['linkSpu']))
+                                            foreach ($original_goods_info['linkSpu'] as $spu){
+                                     ?>
+                                        <?=(empty($spu['name'])?'':$spu['name']).':'.(empty($spu['val'])?'':$spu['val'])?><br/>
+                                     <?php }?>
+                                 </td>
                              </tr>
                          <?php }?>
                          </tbody>
@@ -371,17 +379,17 @@
             }
         })
 
-        $("#area-id").change(function(){
-            var area_id = $(this).val()
+        $("#province-id").change(function(){
+            var province_id = $(this).val()
             var id = $(this).data('id')
-            if(!area_id){
-                layer.msg('请选择订单行政区')
+            if(!province_id){
+                layer.msg('请选择订单省份')
                 return false;
             }
 
-            layer.confirm('是否更改订单行政区',function(){
+            layer.confirm('是否更改订单省份',function(){
                 var index = layer.load(3)
-                $.get("<?=\yii\helpers\Url::to(['mod-area'])?>",{area_id:area_id,id:id},function(result){
+                $.get("<?=\yii\helpers\Url::to(['mod-province'])?>",{province_id:province_id,id:id},function(result){
                     layer.close(index)
                     layer.msg(result.msg)
                     if(result.code==1){

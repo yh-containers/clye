@@ -1,7 +1,7 @@
 <?php
-$this->title='检索商品';
+$this->title='商品详情';
 $this->params = array_merge($this->params,[
-    'body_class' => 'bg'
+    
 ]);
 
 ?>
@@ -44,7 +44,15 @@ $this->params = array_merge($this->params,[
         </div>
 
         <div class="group-warp">
-            <div class="number">
+            <div class="specification">
+                <ul class="clearfix">
+                    <?php foreach($model['linkSpu'] as $vo){?>
+                        <li><?=$vo['name']?>：<?=$vo['val']?></li>
+                    <?php }?>
+                    <li>批号优于：<?=$model['p_no']?></li>
+                </ul>
+            </div>
+            <div class="number clearfix">
                 <span class="num_tip">数量选择</span>
                 <div class="shop-arithmetic">
                     <div class="mui-numbox" data-numbox-min="1">
@@ -52,6 +60,7 @@ $this->params = array_merge($this->params,[
                         <input class="mui-input-numbox" type="number" id="buy-num" />
                         <button class="mui-btn mui-btn-numbox-plus" type="button"></button>
                     </div>
+                    <!-- <span class="unit">公斤</span> -->
                 </div>
             </div>
         </div>
@@ -84,7 +93,7 @@ $this->params = array_merge($this->params,[
             <i class="iconfont icon-star"></i>
             <div class="bar-tab-label">收藏</div>
         </div>
-        <a class="bar-tab-item bg-warning" href="javascript:;" id="buy-buy" data-href="<?=\yii\helpers\Url::to(['order/info','gid'=>$model['id']])?>">立即购买</a>
+        <a class="bar-tab-item bg-warning" href="javascript:;" id="buy-buy" data-href="<?=\yii\helpers\Url::to(['order/info','gid'=>$model['id']])?>">立即下单</a>
         <div class="bar-tab-item bg-danger" onclick="$.common.reqInfo(this)" data-conf="{url:'<?=\yii\helpers\Url::to(['mine/add-cart'])?>',data:{gid:<?=$model['id']?$model['id']:0?>}}">加入购物车</div>
     </div>
 </div>
@@ -108,7 +117,6 @@ $this->params = array_merge($this->params,[
             nextButton: '.swiper-button-next',
             prevButton: '.swiper-button-prev',
             pagination: '.swiper-pagination',
-            paginationType: 'fraction'
         });
 
         $('.header_bar .item').click(function() {

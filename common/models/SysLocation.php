@@ -6,6 +6,8 @@ use common\models\use_traits\SoftDelete;
 class SysLocation extends BaseModel
 {
     use SoftDelete;
+    const CACHE_SETTING_SYS_LOCATION_PROVINCE = 'province';
+
     protected $use_create_time = false;
     public static function tableName()
     {
@@ -31,6 +33,25 @@ class SysLocation extends BaseModel
             [['pid','aid','name','type','sort'],'safe']
         ];
     }
+
+    //获取省份
+    public static function getCacheProvince($is_flush=false)
+    {
+        $cache = \Yii::$app->cache;
+
+        if($is_flush){
+            //清空缓存
+            $cache->delete(self::CACHE_SETTING_SYS_LOCATION_PROVINCE);
+        }
+
+        $data = $cache->getOrSet(self::CACHE_SETTING_SYS_LOCATION_PROVINCE, function () {
+            $data = self::find()->where(['pid'=>1])->asArray()->orderBy('sort asc')->all();
+            return $data;
+        });
+        return $data;
+
+    }
+
 
     /*
      * 日志记录

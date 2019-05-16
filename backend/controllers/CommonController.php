@@ -9,9 +9,12 @@ class CommonController extends Controller
 {
     public $user_id = 0;
     public $user_name = '';
+    //是否是超级管理员用户组内用户
+    public $is_super_manager = false;
 
     public $is_need_login = true;
     protected $ignore_action = '';
+
     /**
      * 用户模型
      * @var \common\models\SysManager
@@ -31,8 +34,13 @@ class CommonController extends Controller
 
         $user_info = \Yii::$app->session->get('user_info');
         if(!empty($user_info)){
-            $this->user_id = $user_info['user_id'];
-            $this->user_model = \common\models\SysManager::findOne($this->user_id);
+            $this->user_id = empty($user_info['user_id'])?0:$user_info['user_id'];
+            $this->is_super_manager = empty($user_info['is_super_manager'])?false:true;
+
+            $this->user_model = \common\models\SysManager::find()
+                ->with(['linkRole.linkParentRoles','linkProvince'])
+                ->where(['id'=>$this->user_id])
+                ->one();
 
             //禁用session
             if(empty($this->user_model) || $this->user_model['status']!=1){

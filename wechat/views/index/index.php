@@ -27,9 +27,9 @@ $this->title = '首页';
     </div>
 </div>
 
-<div class="nav_list">
+<div class="nav_list col-4">
     <?php foreach($goods_cate as $vo){?>
-        <a href="<?=\yii\helpers\Url::to(['goods/index','cid'=>$vo['id']])?>" class="item"><img src="<?=$vo['img']?>"><span><?=$vo['name']?></span></a>
+        <a href="<?=\yii\helpers\Url::to([$vo['is_special']?'goods/special':'goods/index','cid'=>$vo['id']])?>" class="item"><img src="<?=$vo['img']?>"><span><?=$vo['name']?></span></a>
     <?php }?>
 </div>
 

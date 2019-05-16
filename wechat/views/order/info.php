@@ -83,10 +83,6 @@ $this->params = array_merge($this->params,[
                         <p class="price">¥<em><?=$money['goods_money']?></em></p>
                     </li>
                     <li class="buy_chart_item">
-                        <p class="text">运费：</p>
-                        <p class="price">¥<em><?=$money['freight_money']?></em></p>
-                    </li>
-                    <li class="buy_chart_item">
                         <p class="text">税费</p>
                         <p class="price">¥<em><?=$money['taxation_money']?></em></p>
                     </li>
@@ -109,7 +105,7 @@ $this->params = array_merge($this->params,[
 
 
 <div style="display: none" id="contract">
-    <?=  $this->render('/mine/contractDetailTemp',['money'=>$money['pay_money'],'title'=>'合同信息']) ?>
+    <?=  $this->render('/mine/contractDetailTemp',['money'=>$money['pay_money'],'user_model'=>$user_model,'title'=>'合同信息']) ?>
 </div>
 </form>
 <?php $this->endBlock()?>

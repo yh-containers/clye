@@ -63,11 +63,13 @@ class IndexController extends CommonController
                     throw new \yii\base\UserException($e->getMessage());
                 }
             }
-
-
             self::handleAction($model_user);
-
-            return $this->asJson(['code'=>1,'msg'=>'登录成功','url'=>\yii\helpers\Url::to(['index'])]);
+            if($model_user['province']){
+                $redirect_url = \yii\helpers\Url::to(['index']);
+            }else{
+                $redirect_url = \yii\helpers\Url::to(['mine/info']);
+            }
+            return $this->asJson(['code'=>1,'msg'=>'登录成功','url'=>$redirect_url]);
         }
 
         return $this->render('login',[

@@ -15,7 +15,7 @@ use yii\base\Behavior;
 class CheckAuth extends Behavior
 {
     //忽略动作
-    private $ignore_action = 'index/captcha,index/logout,index/login,index/index,debug/default/view';
+    private $ignore_action = 'index/captcha,index/logout,index/login,index/index,debug/default/view,upload/upload,index/location';
     private $ignore_role_id = [1];
 
     public function init()

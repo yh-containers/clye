@@ -45,6 +45,7 @@ class GoodsCate extends BaseModel
             [['name','pid'], 'required','message'=>'{attribute}不能为空'],
             ['sort','default','value'=>100],
             ['status','default','value'=>1],
+            ['is_special','default','value'=>0],
             [['pid','img','name'],'safe']
         ];
     }

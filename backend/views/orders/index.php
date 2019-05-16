@@ -49,7 +49,7 @@ $this->params = [
                     <th width="60">运费</th>
                     <th width="60">税费</th>
                     <th width="120">创建时间</th>
-                    <th width="80">行政区</th>
+                    <th width="80">省份</th>
                     <th width="80">跟进人</th>
                     <th width="80">状态(流程)</th>
                     <th width="80">操作</th>
@@ -68,7 +68,7 @@ $this->params = [
                         <td><?=$vo['freight_money']?> </td>
                         <td><?=$vo['taxation_money']?> </td>
                         <td><?=$vo['createTime']?></td>
-                        <td><?=$vo['linkLocationArea']['name']?></td>
+                        <td><?=$vo['linkLocationProvince']['name']?></td>
                         <td><?=$vo['linkFlowManager']['name']?></td>
                         <td>
                             <?php

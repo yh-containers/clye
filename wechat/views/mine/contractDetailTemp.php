@@ -13,26 +13,26 @@
             <li>
                 <div class="label">公司名称</div>
                 <div class="con">
-                    <input type="text" name="contract[name]" value="" placeholder="请填写公司名称" autocomplete="off">
+                    <input type="text" name="contract[name]" value="<?=empty($user_model)?'':$user_model['company_name']?>" placeholder="请填写公司名称" autocomplete="off">
                 </div>
             </li>
 
             <li>
                 <div class="label">地址</div>
                 <div class="con">
-                    <input type="text" name="contract[addr]" value="" placeholder="请填写公司地址" autocomplete="off">
+                    <input type="text" name="contract[addr]" value="<?=empty($user_model)?'':$user_model['company_addr']?>" placeholder="请填写公司地址" autocomplete="off">
                 </div>
             </li>
             <li>
                 <div class="label">法人代表</div>
                 <div class="con">
-                    <input type="text" name="contract[f_name]" value="" placeholder="请填写法人代表" autocomplete="off">
+                    <input type="text" name="contract[f_name]" value="<?=empty($user_model)?'':$user_model['contacts']?>" placeholder="请填写法人代表" autocomplete="off">
                 </div>
             </li>
             <li>
                 <div class="label">委托代理人</div>
                 <div class="con">
-                    <input type="text" name="contract[w_name]" value="" placeholder="请填写委托代理人" autocomplete="off">
+                    <input type="text" name="contract[w_name]" value="<?=empty($user_model)?'':$user_model['contacts']?>" placeholder="请填写委托代理人" autocomplete="off">
                 </div>
             </li>
             <li>

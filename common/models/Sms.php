@@ -15,13 +15,18 @@ class Sms extends BaseModel
     }
 
     //发送邮件
-    public static function sendMail($phone,$type)
+    public static function sendMail($phone,$type,$direct_content = '')
     {
         if(empty($phone))  throw new \Exception('邮箱不能为空');
         $info = self::getTypeInfo($type);
         if(empty($info)) throw new \Exception('发送类型异常');
 
-        list($content,$data) = self::handleContent($info['content']);
+        $data = [];
+        if(empty($direct_content)){
+            list($content,$data) = self::handleContent($info['content']);
+        }else{
+            $content = $direct_content;
+        }
         $info = null;
         try{
             //发送信息
@@ -53,6 +58,7 @@ class Sms extends BaseModel
             ['name'=>'修改密码','content'=>'欢迎您登录华祖百草通，您本次找回密码的验证码为{__VERIFY__}'],
             ['name'=>'验证手机号码','content'=>'欢迎您登录华祖百草通，您本次验证手机号码的验证码为{__VERIFY__}'],
             ['name'=>'修改手机号码','content'=>'欢迎您登录华祖百草通，您本次更换手机号码的验证码为{__VERIFY__}'],
+            ['name'=>'用户下单通知','content'=>'有用户下单,请尽快处理'],
         ];
         if(is_null($data)){
             return $data;

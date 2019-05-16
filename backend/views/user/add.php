@@ -28,24 +28,14 @@
                         <label for="inputPassword3" class="col-sm-2 control-label">用户类型</label>
 
                         <div class="col-sm-10">
-                            <select name="type" class="form-control">
-                                <?php foreach($type_list as $vo) {?>
-                                    <option value="<?=$vo['id']?>" <?=$vo['id']==$model['type']?'selected':''?>><?=$vo['name']?></option>
+                            <select name="cg_type" class="form-control">
+                                <?php foreach(\common\models\User::getUserTypePoint() as $vo) {?>
+                                    <option value="<?=$vo['type']?>" <?=$vo['type']==$model['cg_type']?'selected':''?>><?=$vo['name']?></option>
                                 <?php }?>
                             </select>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label for="inputPassword3" class="col-sm-2 control-label">行政区</label>
 
-                        <div class="col-sm-10">
-                            <select name="area_id" class="form-control">
-                                <?php foreach($area as $vo) {?>
-                                    <option value="<?=$vo['id']?>" <?=$vo['id']==$model['area_id']?'selected':''?>><?=$vo['name']?></option>
-                                <?php }?>
-                            </select>
-                        </div>
-                    </div>
                     <div class="form-group">
                         <label for="inputPassword3" class="col-sm-2 control-label">地区</label>
 
@@ -116,6 +106,12 @@
                         <label for="inputPassword3" class="col-sm-2 control-label">联系人</label>
                         <div class="col-sm-10">
                             <input type="text" class="form-control" name="contacts" value="<?= $model['contacts']?>"  placeholder="联系人" maxlength="100">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputPassword3" class="col-sm-2 control-label">公司地址</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="company_addr" value="<?= $model['company_addr']?>"  placeholder="公司地址" maxlength="100">
                         </div>
                     </div>
 

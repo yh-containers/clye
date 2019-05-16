@@ -21,7 +21,9 @@ class SysManager extends BaseModel
             'account'   => '帐号',
             'rid'       => '角色',
             'area_id'   => '行政区',
+            'province'  => '省份',
             'password'  => '密码',
+            'phone'     => '手机号',
         ]);
     }
 
@@ -31,6 +33,17 @@ class SysManager extends BaseModel
     public function getUserRoleName()
     {
         return !empty($this['linkRole'])?(!empty($this['linkRole']['linkParentRoles'])?($this['linkRole']['linkParentRoles']['name'].'('.$this['linkRole']['name'].')'):$this['linkRole']['name']):'--';
+    }
+
+    /**
+     * 获取管理员省份
+     * */
+    public function getProvince($is_force=true)
+    {
+        if($is_force && empty($this->province)){
+            throw new \Exception('请设置管理员省份');
+        }
+        return $this->province;
     }
 
     //获取用户角色节点信息
@@ -80,10 +93,11 @@ class SysManager extends BaseModel
     public function rules()
     {
         return [
-            [['name','account'], 'required','message'=>'{attribute}必须输入'],
+            [['name','account','phone'], 'required','message'=>'{attribute}必须输入'],
             [['name'], 'string','length'=>[2,15],'tooLong'=>'{attribute}不得超过{max}个字符','tooShort'=>'{attribute}不得低于{min}个字符'],
+            ['phone','match','pattern'=>'/^1[0-9]{10}$/','message'=>'请输入正确的手机号码'],
             [['rid'], 'required','message'=>'请选择管理员{attribute}'],
-            [['area_id'], 'required','message'=>'请选择管理员{attribute}'],
+            [['province'], 'required','message'=>'请选择管理员{attribute}'],
             [['account'], 'string','length'=>[4,15],'tooLong'=>'{attribute}不得超过{max}个字符','tooShort'=>'{attribute}不得低于{min}个字符'],
             [['account'], 'unique','message'=>'{attribute}帐号已使用'],
             [['password'], 'string', 'when' => function ($model,$attribute) {
@@ -93,7 +107,7 @@ class SysManager extends BaseModel
                 return empty($model->id);
             },'message'=>'{attribute}不能为空'],
             //默认值
-            [['status'],'default', 'value' => 1]
+            [['status'],'default', 'value' => 1],
         ];
     }
 
@@ -120,6 +134,13 @@ class SysManager extends BaseModel
     public function getLinkAreaName()
     {
         return $this->hasOne(SysLocationArea::className(),['id'=>'area_id']);
+    }
+    /**
+     * 管理区域
+     * */
+    public function getLinkProvince()
+    {
+        return $this->hasOne(SysLocation::className(),['id'=>'province']);
     }
 
 

@@ -23,6 +23,14 @@ class SysRole extends BaseModel
         ]);
     }
 
+    //获取超级管理员用户列
+    public static function getSupers()
+    {
+         $data= self::find()->asArray()->where(['pid'=>1,'status'=>1])->all();
+         $supers=$data?array_column($data,'id'):[];
+         array_push($supers,1);
+         return $supers;
+    }
 
 
     public function rules()

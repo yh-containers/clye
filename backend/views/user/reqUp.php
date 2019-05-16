@@ -10,7 +10,6 @@ $this->params = [
 
     <div class="box">
         <div class="box-header with-border">
-
         </div>
         <!-- /.box-header -->
         <div class="box-body">
@@ -32,14 +31,14 @@ $this->params = [
                     <tr>
                         <td><?=$key+1?></td>
                         <td><a href="<?=\yii\helpers\Url::to(['detail','id'=>$vo['uid']])?>"><?=$vo['linkUser']['username']?></a></td>
-                        <td><?=$vo['linkUser']['linkType']['name']?></td>
+                        <td><?=\common\models\User::getUserTypePoint(null,'name',$vo['type'])?></td>
 
                         <td><?=$vo['create_time']?date('Y-m-d H:i:s',$vo['create_time']):''?></td>
                         <td><?=$vo['handle_time']?date('Y-m-d H:i:s',$vo['handle_time']):''?></td>
                         <td><?=\common\models\UserReqUp::getStatusName($vo['status'])?></td>
                         <td>
                             <?php if(!$vo['status']){?>
-                            <a href="javascript:;" class="handle-status" data-id="<?=$vo['id']?>">处理</a>
+                            <a href="javascript:;" class="layui-btn layui-btn-danger layui-btn-sm handle-status" data-id="<?=$vo['id']?>">处理</a>
                             <?php }?>
                         </td>
                     </tr>
@@ -84,4 +83,16 @@ $this->params = [
         })
     })
 </script>
+<style>
+.layui-layer-content {
+    position: relative;
+    padding: 20px;
+    line-height: 24px;
+    word-break: break-all;
+    overflow: hidden;
+    font-size: 14px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+</style>
 <?php $this->endBlock()?>

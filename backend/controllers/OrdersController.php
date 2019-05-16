@@ -38,20 +38,24 @@ class OrdersController extends CommonController
         //关键字搜索
         !empty($keyword)  && $query = $query->andWhere(['like','no',$keyword]);
 
-        //获取管理员角色问题
+
         //获取所有超级管理员组
-        $roles = \common\models\SysRole::find()->asArray()->where(['or',['pid'=>1],['id'=>1]])->all();
-        $roles_groups = array_column($roles,'id');
-        if(!in_array($this->user_model->rid,$roles_groups)){
-            $query = $query->andWhere(['or',[\common\models\Order::tableName().'.area_id'=>$this->user_model->area_id],['m_uid'=>$this->user_id]]);
+        if(!$this->is_super_manager){
+            $province = empty($this->user_model['province'])?-1:$this->user_model['province'];
+            $query = $query->andWhere([\common\models\Order::tableName().'.province'=>$province]);
         }
 
         $count = $query->count();
         $pagination = \Yii::createObject(array_merge(\Yii::$app->components['pagination'],['totalCount'=>$count]));
-        $list = $query->joinWith(['linkLocationArea','linkFlowManager'])->offset($pagination->offset)->limit($pagination->limit)->orderBy('id desc')->all();
+        $list = $query->joinWith(['linkLocationProvince','linkFlowManager'])->offset($pagination->offset)->limit($pagination->limit)->orderBy('id desc')->all();
+
 
         //所有员工
-        $manager = \common\models\SysManager::find()->all();
+        $where = [];
+        if(!$this->is_super_manager){
+            $where['province']= $this->user_model['province']?$this->user_model['province']:-1;
+        }
+        $manager = \common\models\SysManager::find()->where($where)->all();
         return $this->render('index',[
             'state'  =>  $state,
             'keyword'  =>  $keyword,
@@ -84,13 +88,19 @@ class OrdersController extends CommonController
                 }
             }
         }
+
         //所有员工
-        $manager = \common\models\SysManager::find()->all();
+        $where = [];
+        if(!$this->is_super_manager){
+            $where['province']= $this->user_model['province']?$this->user_model['province']:-1;
+        }
+        $manager = \common\models\SysManager::find()->where($where)->all();
         return  $this->render('detail',[
             'model' => $model,
             'opt_handle' => $opt_handle,
             'area' => \common\models\SysLocationArea::getCacheData(),
-            'manager' => $manager
+            'manager' => $manager,
+            'province' => \common\models\SysLocation::getCacheProvince(),
         ]);
     }
     //已收到付款
@@ -166,6 +176,18 @@ class OrdersController extends CommonController
         }
         $this->asJson(['code'=>1,'msg'=>'操作成功']);
     }
+    //修改订单行政区
+    public function actionModProvince()
+    {
+        $id = $this->request->get('id');
+        $province_id = $this->request->get('province_id');
+        try{
+            \common\models\Order::modProvince($id,$province_id);
+        }catch (\Exception $e){
+            throw new \yii\base\UserException($e->getMessage());
+        }
+        $this->asJson(['code'=>1,'msg'=>'操作成功']);
+    }
 
     //查看合同信息
     public function actionContract()
@@ -230,7 +252,7 @@ class OrdersController extends CommonController
     {
         //数据库取出数据
         $query = \common\models\Order::find()
-            ->with(['linkUser','linkLocationArea','linkFlowManager'])
+            ->with(['linkUser','linkLocationProvince','linkFlowManager'])
             ->orderBy('id desc')
         ;
         $state = $this->request->get('state',0);
@@ -261,8 +283,14 @@ class OrdersController extends CommonController
         //关键字搜索
         !empty($keyword)  && $query = $query->andWhere(['like','no',$keyword]);
 
+        //获取所有超级管理员组
+        if(!$this->is_super_manager){
+            $province = empty($this->user_model['province'])?-1:$this->user_model['province'];
+            $query = $query->andWhere([\common\models\Order::tableName().'.province'=>$province]);
+        }
+
         $data = [
-            ['订单号','用户名','用户手机号码','订单金额','支付金额','运费','税费','创建时间','行政区','跟进人','状态(流程)'],
+            ['订单号','用户名','用户手机号码','订单金额','支付金额','运费','税费','创建时间','省份','跟进人','状态(流程)'],
         ];
         foreach ($query->batch() as $orders){
             foreach ($orders as $item){
@@ -276,7 +304,7 @@ class OrdersController extends CommonController
                    $item['freight_money'],
                    $item['taxation_money'],
                    $item['create_time']?date('Y-m-d H:i:s',$item['create_time']):'',
-                   $item['linkLocationArea']['name'],
+                   $item['linkLocationProvince']['name'],
                    $item['linkFlowManager']['name'],
                    $state_info['name'].'('.\common\models\Order::getStepFlowInfo($item['step_flow'],'name').')',
                ]);

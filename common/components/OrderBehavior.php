@@ -43,6 +43,21 @@ class OrderBehavior extends Behavior
                     \Yii::$app->urlManagerWx->createAbsoluteUrl(['order/detail','id'=>$object->id],true)
                 );
 
+                //发送短信通知管理员
+                if(!empty($object->m_uid)){
+                    //查询管理员号码
+                    $model_manager = \common\models\SysManager::findOne($object->m_uid);
+                    if(!empty($model_manager['phone'])){
+                        $msg = '有用户下单:订单号:'.$object->no.',订单金额:'.$object->pay_money.',下单时间:'.date('Y-m-d H:i:s',$object->create_time).';请尽快处理';
+                        try{
+                            \common\models\Sms::sendMail($model_manager['phone'],6,$msg);
+                        }catch (\Exception $e){
+//                            var_dump($e->getMessage());exit;
+                        }
+                    }
+
+                }
+
             }elseif ($event->name==ActiveRecord::EVENT_BEFORE_DELETE){
                 //删除
                 \common\models\UserOrderLogs::recordLog($object->id,'删除订单','删除订单',0,[],1);
